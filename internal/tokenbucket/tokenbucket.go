@@ -2,10 +2,11 @@ package tokenbucket
 
 import (
 	"context"
-	"errors"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/errors"
 )
 
 // Algorithm description
@@ -24,17 +25,12 @@ type TokenBucket struct {
 	mx            sync.Mutex
 }
 
-var (
-	// ErrTokenBucketInvalidFillRate appears when the rate ==0 is used. To avoid the panic of NewTimeTicker()
-	ErrTokenBucketInvalidFillRate = errors.New("invalid rate, zero value is not allowed")
-)
-
 // NewTokenBucket creates a new instance of TokenBucket
 func NewTokenBucket(ctx context.Context, capacity uint32, rate time.Duration) (*TokenBucket, error) {
 	// To protect for inaccurate function usage. In case of rate == 0  NewTicker will be created with a very loooong period of tick ~ 290 years.
 	// In other terms ticker will not run in closest time.
 	if rate == 0 {
-		return nil, ErrTokenBucketInvalidFillRate
+		return nil, errors.ErrTokenBucketInvalidFillRate
 	}
 
 	tb := &TokenBucket{
