@@ -36,6 +36,11 @@ func TestTockenBucketMemory(t *testing.T) {
 		assert.Equal(t, 1, len(tb.TokenBuckets))
 	})
 
+	t.Run("Verify Create an existing bucket", func(t *testing.T) {
+		err := tb.CreateBucket(ctx, testID, 1, &mocks.DummyBucket{})
+		assert.Equal(t, errors.ErrTokenBucketAlreadyExists, err)
+	})
+
 	t.Run("Verify GetBucket()", func(t *testing.T) {
 		b, err := tb.GetBucket(ctx, testID)
 		if err != nil {
