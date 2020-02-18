@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+service ABFService {
+    rpc Allow(AuthRequest) returns (AuthResponse) {
+    }
+    rpc Reset(AuthRequest) returns (AuthResponse) {
+    }
+    rpc AddToIpFilter (IPFilterData) returns (IPFilterResponse) {
+    }
+    rpc DeleteFromIpFilter (IPFilterData) returns (IPFilterResponse) {
+    }
+    rpc GetIpFilters (IPFilterData) returns (IPFiltersData) {
+    }
+}
+
+message AuthRequest {
+   string login=1;
+   string password=2;
+   string ipaddr= 3;
+}
+
+message AuthResponse {
+    oneof response {
+    bool ok = 1;
+    string error = 2;
+    }
+}
+
+message IPFilterData {
+    string network =1;
+    bool color =2;
+}
+
+message IPFilterResponse {
+    string error = 1;
+}
+
+message IPFiltersData {
+    repeated string filters = 1;
+    string error = 2;
+}
