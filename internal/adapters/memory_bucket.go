@@ -43,8 +43,8 @@ func (tb *TokenBucketMemory) CreateBucket(ctx context.Context, id uuid.UUID, rat
 
 	_, err := tb.GetBucket(ctx, id)
 
-	if err != nil {
-		return err
+	if err == nil {
+		return errors.ErrTokenBucketAlreadyExists
 	}
 	tb.mx.Lock()
 	tb.TokenBuckets[id] = bucket
