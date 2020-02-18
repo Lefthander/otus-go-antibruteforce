@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"net"
 
 	"github.com/jmoiron/sqlx"
@@ -76,17 +75,17 @@ func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 // ListIPNetworks in specified by color (B/W) table
 func (d *IPFilterDB) ListIPNetworks(ctx context.Context, color bool) ([]string, error) {
 	// TODO:
-	var result sql.Result
+	//var result sql.Result
 	switch color {
 	case true:
 		request := `SELECT * FROM ip_white_list`
-		result, err := d.DB.ExecContext(ctx, request)
+		_, err := d.DB.ExecContext(ctx, request)
 		if err != nil {
 			return nil, err
 		}
 	case false:
 		request := `SELECT * FROM ip_black_list`
-		result, err := d.DB.ExecContext(ctx, request)
+		_, err := d.DB.ExecContext(ctx, request)
 		if err != nil {
 			return nil, err
 		}
