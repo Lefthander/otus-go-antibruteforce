@@ -7,5 +7,5 @@ import (
 // Bucket is interface which implements the bucket functionality
 type Bucket interface {
 	Allow(ctx context.Context) bool
-    Reset(ctx context.Context)
+	Reset(ctx context.Context)
 }
