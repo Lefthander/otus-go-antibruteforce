@@ -1,6 +1,8 @@
 package entities
 
-import "net"
+import (
+	"net"
+)
 
 // IPFilter is a model of IP Filter list
 type IPFilter struct {
