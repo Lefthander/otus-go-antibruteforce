@@ -2,8 +2,10 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"net"
 
+	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/errors"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -69,27 +71,57 @@ func (d *IPFilterDB) DeleteIPNetwork(ctx context.Context, network net.IPNet, col
 func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 
 	// TODO:
-	return true, nil
+
+	requestWhite := `SELECT * FROM ip_white_list WHERE ipaddr=$1 << ANY (network)`
+
+	wnets := make([]string, 0)
+
+	err := d.DB.SelectContext(ctx, &wnets, requestWhite)
+	if err != nil && err != sql.ErrNoRows {
+		return false, err
+	}
+
+	if len(wnets) != 0 {
+		return true, errors.ErrIPFilterMatchedWhiteList
+	}
+
+	bnets := make([]string, 0)
+
+	requestBlack := `SELECT * FROM ip_black_list WHERE ipaddr=$1 << ANY (network)`
+
+	err = d.DB.SelectContext(ctx, &bnets, requestBlack)
+	if err != nil && err != sql.ErrNoRows {
+		return false, err
+	}
+
+	if len(bnets) != 0 {
+		return true, errors.ErrIPFilterMatchedBlackList
+	}
+
+	return false, errors.ErrIPFilterNoMatch
 }
 
 // ListIPNetworks in specified by color (B/W) table
 func (d *IPFilterDB) ListIPNetworks(ctx context.Context, color bool) ([]string, error) {
 	// TODO:
 	//var result sql.Result
+
+	nets := make([]string, 0)
+
 	switch color {
 	case true:
 		request := `SELECT * FROM ip_white_list`
-		_, err := d.DB.ExecContext(ctx, request)
-		if err != nil {
+		err := d.DB.SelectContext(ctx, &nets, request)
+		if err != nil && err != sql.ErrNoRows {
 			return nil, err
 		}
 	case false:
 		request := `SELECT * FROM ip_black_list`
-		_, err := d.DB.ExecContext(ctx, request)
-		if err != nil {
+		err := d.DB.SelectContext(ctx, &nets, request)
+		if err != nil && err != sql.ErrNoRows {
 			return nil, err
 		}
 
 	}
-	return nil, nil
+	return nets, nil
 }
