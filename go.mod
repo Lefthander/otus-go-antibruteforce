@@ -8,6 +8,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/prometheus/client_golang v1.4.1
 	github.com/satori/go.uuid v1.2.0
+	github.com/spf13/viper v1.6.2
 	github.com/stretchr/testify v1.4.0
 	google.golang.org/grpc v1.27.1
 )
