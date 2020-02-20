@@ -61,5 +61,4 @@ func TestTockenBucketMemory(t *testing.T) {
 		err := tb.DeleteBucket(ctx, testID)
 		assert.Equal(t, errors.ErrTokenBucketNotFound, err)
 	})
-
 }

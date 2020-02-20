@@ -7,13 +7,18 @@ import (
 )
 
 // Testcases:
-// 1. Create a bucket and check that amount of tokens does not decreased when there are no requests to the bucket.
-// 2. Create a bucket and check that it's possible to get all capacity without any cancelation from the bucket in the burst
-// 3. Create an empty bucket and check that all followup requests will be disallowed.
+// 1. Create a bucket and check that amount of tokens does not decreased when
+//    there are no requests to the bucket.
+// 2. Create a bucket and check that it's possible to get all capacity
+//    without any cancelation from the bucket in the burst
+// 3. Create an empty bucket and check that all followup requests will be
+//    disallowed.
 // 4. Create a bucket which allows to have not more then 10 request per minute
-// 5. Create a bucket with significant capacity, start taking tokens from it, reset bucket. Ensure that bucket returns to initial state: Capacity == currentAmount
+// 5. Create a bucket with significant capacity, start taking tokens from it,
+//    reset bucket. Ensure that bucket returns to initial state: Capacity == currentAmount
 
-// 1. Create a bucket and check that amount of tokens does not decreased when there are no requests to the bucket.
+// 1. Create a bucket and check that amount of tokens does not decreased when there are no
+//    requests to the bucket.
 
 const (
 	WAITTIME3 = 3
@@ -99,7 +104,8 @@ func TestEmptyBucket(t *testing.T) {
 	}
 }
 
-// 5. Create a bucket with significant capacity, start taking tokens from it, reset bucket. Ensure that bucket returns to initial state: Capacity == currentAmount
+// 5. Create a bucket with significant capacity, start taking tokens from it, reset bucket.
+// Ensure that bucket returns to initial state: Capacity == currentAmount
 func TestResetBucket(t *testing.T) {
 	capacity := 100
 
@@ -128,7 +134,8 @@ func TestResetBucket(t *testing.T) {
 	}
 }
 
-// Test Bucket with Zero Capacity, bucket allways must response Allow = false, and keep consistency capacity & currentAmout == 0
+// Test Bucket with Zero Capacity, bucket allways must response Allow = false,
+// and keep consistency capacity & currentAmout == 0
 func TestZeroCapacityBucket(t *testing.T) {
 	capacity := 0
 
@@ -156,7 +163,8 @@ func TestZeroCapacityBucket(t *testing.T) {
 	}
 }
 
-// Test Bucket with Zero fillRate, bucket must response Allow = true for all request belongs his capacity and after that respond Allow = false for forever
+// Test Bucket with Zero fillRate, bucket must response Allow = true for all request belongs
+// his capacity and after that respond Allow = false for forever
 func TestZeroFillRateBucket(t *testing.T) {
 	capacity := 10
 

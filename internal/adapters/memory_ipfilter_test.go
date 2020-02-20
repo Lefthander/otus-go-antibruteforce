@@ -77,5 +77,4 @@ func TestIPFilterMemory(t *testing.T) {
 		err := ipstore.DeleteIPNetwork(ctx, *testnet3, false)
 		assert.Equal(t, errors.ErrIPFilterNetworkNotFound, err)
 	})
-
 }

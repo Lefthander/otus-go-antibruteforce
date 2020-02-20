@@ -98,7 +98,6 @@ func (ipf *IPFilterMemory) DeleteIPNetwork(ctx context.Context, network net.IPNe
 			delete(ipf.BlackIPList.Nets, network.String())
 			return nil
 		}
-
 	}
 	return errors.ErrIPFilterNetworkNotFound
 }
