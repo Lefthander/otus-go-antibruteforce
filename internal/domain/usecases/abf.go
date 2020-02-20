@@ -26,7 +26,6 @@ func NewABFService(numberOfLogin, numberOfPassword, numberOfIP uint32, bucketSto
 		BucketStorage:   bucketStorage,
 		IPFilterStorage: filterStorage,
 	}
-
 }
 
 // IsAuthenticate verifies is allow or not to pass the AuthenticationRequest

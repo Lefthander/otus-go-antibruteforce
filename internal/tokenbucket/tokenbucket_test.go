@@ -118,8 +118,10 @@ func TestResetBucket(t *testing.T) {
 	for i := 0; i < 50; i++ {
 		tb.Allow()
 	}
+
 	if tb.Amount() != tb.Capacity() {
 		tb.Reset()
+
 		if tb.Amount() != tb.Capacity() {
 			t.Errorf("The bucket must has the capacity=%d and amount=%d are equals after the reset!", tb.Capacity(), tb.Amount())
 		}

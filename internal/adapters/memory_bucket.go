@@ -25,7 +25,6 @@ func NewTokenBucketMemory() *TokenBucketMemory {
 
 // GetBucket returns bucket from the store if preset or error in case of absent
 func (tb *TokenBucketMemory) GetBucket(ctx context.Context, id uuid.UUID) (interfaces.Bucket, error) {
-
 	tb.mx.RLock()
 	defer tb.mx.RUnlock()
 
@@ -38,20 +37,17 @@ func (tb *TokenBucketMemory) GetBucket(ctx context.Context, id uuid.UUID) (inter
 
 // CreateBucket in memory the instace of Bucket
 func (tb *TokenBucketMemory) CreateBucket(ctx context.Context, id uuid.UUID, rate uint32, bucket interfaces.Bucket) error {
-
-	// TODO:
-
 	_, err := tb.GetBucket(ctx, id)
 
 	if err == nil {
 		return errors.ErrTokenBucketAlreadyExists
 	}
+
 	tb.mx.Lock()
 	tb.TokenBuckets[id] = bucket
 	tb.mx.Unlock()
 
 	return nil
-
 }
 
 // DeleteBucket removes the specified bucket from the storage
@@ -66,5 +62,6 @@ func (tb *TokenBucketMemory) DeleteBucket(ctx context.Context, id uuid.UUID) err
 	tb.mx.Lock()
 	delete(tb.TokenBuckets, id)
 	tb.mx.Unlock()
+
 	return nil
 }

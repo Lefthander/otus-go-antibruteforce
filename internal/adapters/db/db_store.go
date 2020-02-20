@@ -37,6 +37,7 @@ func (d *IPFilterDB) AddIPNetwork(ctx context.Context, network net.IPNet, color 
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -58,6 +59,7 @@ func (d *IPFilterDB) DeleteIPNetwork(ctx context.Context, network net.IPNet, col
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -68,6 +70,7 @@ func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 	wnets := make([]string, 0)
 
 	err := d.DB.SelectContext(ctx, &wnets, requestWhite)
+
 	if err != nil && err != sql.ErrNoRows {
 		return false, err
 	}
@@ -81,6 +84,7 @@ func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 	requestBlack := `SELECT * FROM ip_black_list WHERE ipaddr=$1 << ANY (network)`
 
 	err = d.DB.SelectContext(ctx, &bnets, requestBlack)
+
 	if err != nil && err != sql.ErrNoRows {
 		return false, err
 	}
@@ -100,12 +104,14 @@ func (d *IPFilterDB) ListIPNetworks(ctx context.Context, color bool) ([]string, 
 	case true:
 		request := `SELECT * FROM ip_white_list`
 		err := d.DB.SelectContext(ctx, &nets, request)
+
 		if err != nil && err != sql.ErrNoRows {
 			return nil, err
 		}
 	case false:
 		request := `SELECT * FROM ip_black_list`
 		err := d.DB.SelectContext(ctx, &nets, request)
+
 		if err != nil && err != sql.ErrNoRows {
 			return nil, err
 		}

@@ -22,7 +22,6 @@ type ServiceConfig struct {
 
 // GetConfig reads configuration from the provided file
 func (c *ServiceConfig) GetConfig(cfgname string) (*ServiceConfig, error) {
-
 	viper.SetConfigName(strings.Split(filepath.Base(cfgname), ".")[0])
 	viper.AddConfigPath(cfgname)
 
@@ -31,14 +30,12 @@ func (c *ServiceConfig) GetConfig(cfgname string) (*ServiceConfig, error) {
 	cfg := ServiceConfig{}
 
 	if err != nil {
-
 		log.Fatal("Failed to get the config file", err)
 	}
 
 	err = viper.Unmarshal(&cfg)
 
 	if err != nil {
-
 		log.Fatal("Failed to unmarshal config", err)
 	}
 
