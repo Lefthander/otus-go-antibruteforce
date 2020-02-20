@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -20,11 +21,12 @@ type ServiceConfig struct {
 }
 
 // GetConfig reads configuration from the provided file
-func (c *ServiceConfig) GetConfig(path string) (*ServiceConfig, error) {
-	viper.SetConfigName(strings.Split(path.Base(path), ".")[0])
-	viper.AddConfigPath(path)
+func (c *ServiceConfig) GetConfig(cfgname string) (*ServiceConfig, error) {
 
-	err := viper.ReadConfig()
+	viper.SetConfigName(strings.Split(filepath.Base(cfgname), ".")[0])
+	viper.AddConfigPath(cfgname)
+
+	err := viper.ReadInConfig()
 
 	cfg := ServiceConfig{}
 
