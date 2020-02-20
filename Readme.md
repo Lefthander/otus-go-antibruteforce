@@ -1,5 +1,5 @@
 
-[![Lefthander](https://circleci.com/gh/Lefthander/tokenbucket.svg?style=svg)](<LINK>)
+[![CircleCI](https://circleci.com/gh/Lefthander/otus-go-antibruteforce.svg?style=svg)](https://circleci.com/gh/Lefthander/otus-go-antibruteforce)
 [![Go Report Card](https://goreportcard.com/badge/github.com/lefthander/otus-go-antibruteforce)](https://goreportcard.com/report/github.com/lefthander/tokenbucket)
 
 # Проектная работа
