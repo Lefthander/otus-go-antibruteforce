@@ -14,6 +14,14 @@ import (
 // 5. Create a bucket with significant capacity, start taking tokens from it, reset bucket. Ensure that bucket returns to initial state: Capacity == currentAmount
 
 // 1. Create a bucket and check that amount of tokens does not decreased when there are no requests to the bucket.
+
+const (
+	WAITTIME3 = 3
+	WAITTIME1 = 1
+	WAITTIME5 = 5
+	WAITTIME0 = 0
+)
+
 func TestStillBucket(t *testing.T) {
 	capacity := 5
 
@@ -29,7 +37,7 @@ func TestStillBucket(t *testing.T) {
 		t.Error("Error", err)
 	}
 
-	time.Sleep(fillRate * 3) // Whait for some time
+	time.Sleep(fillRate * WAITTIME3) // Whait for some time
 	if tb.Capacity() != tb.Amount() {
 		t.Errorf("Bucket without requests must keep the currentAmoutn=%d equals to defined capacity=%d", tb.Amount(), tb.Capacity())
 	}
@@ -40,7 +48,7 @@ func TestFullBucket(t *testing.T) {
 	var allow bool
 
 	capacity := 5
-	fillRate := 1 * time.Second // Set a quite long period of refill
+	fillRate := WAITTIME1 * time.Second // Set a quite long period of refill
 
 	ctx, done := context.WithCancel(context.Background())
 
@@ -64,7 +72,7 @@ func TestFullBucket(t *testing.T) {
 func TestEmptyBucket(t *testing.T) {
 	capacity := 3
 
-	fillRate := 5 * time.Second
+	fillRate := WAITTIME5 * time.Second
 
 	ctx, done := context.WithCancel(context.Background())
 
@@ -94,7 +102,7 @@ func TestEmptyBucket(t *testing.T) {
 func TestResetBucket(t *testing.T) {
 	capacity := 100
 
-	fillRate := 1 * time.Second
+	fillRate := WAITTIME1 * time.Second
 
 	ctx, done := context.WithCancel(context.Background())
 
@@ -122,7 +130,7 @@ func TestZeroCapacityBucket(t *testing.T) {
 
 	capacity := 0
 
-	fillRate := 1 * time.Millisecond
+	fillRate := WAITTIME1 * time.Millisecond
 
 	ctx, done := context.WithCancel(context.Background())
 
@@ -150,7 +158,7 @@ func TestZeroCapacityBucket(t *testing.T) {
 func TestZeroFillRateBucket(t *testing.T) {
 	capacity := 10
 
-	fillRate := 0 * time.Millisecond
+	fillRate := WAITTIME0 * time.Millisecond
 
 	ctx, done := context.WithCancel(context.Background())
 
