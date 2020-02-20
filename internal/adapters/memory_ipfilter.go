@@ -109,6 +109,7 @@ func (ipf *IPFilterMemory) DeleteIPNetwork(ctx context.Context, network net.IPNe
 func (ipf *IPFilterMemory) ListIPNetworks(ctx context.Context, color bool) ([]string, error) {
 
 	var iplist []string
+
 	switch color {
 	case true:
 		ipf.mxWhite.Lock()
@@ -117,6 +118,7 @@ func (ipf *IPFilterMemory) ListIPNetworks(ctx context.Context, color bool) ([]st
 		for k := range ipf.WhiteIPList.Nets {
 			iplist = append(iplist, k)
 		}
+
 		return iplist, nil
 	case false:
 		ipf.mxBlack.Lock()
@@ -125,6 +127,7 @@ func (ipf *IPFilterMemory) ListIPNetworks(ctx context.Context, color bool) ([]st
 		for k := range ipf.BlackIPList.Nets {
 			iplist = append(iplist, k)
 		}
+
 		return iplist, nil
 	}
 	return nil, nil

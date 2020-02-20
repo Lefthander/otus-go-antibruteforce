@@ -40,5 +40,4 @@ func (c *ServiceConfig) GetConfig(cfgname string) (*ServiceConfig, error) {
 	}
 
 	return &cfg, nil
-
 }

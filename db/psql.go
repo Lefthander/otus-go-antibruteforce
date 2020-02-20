@@ -14,5 +14,4 @@ func ConnectDB(c *config.ServiceConfig) (*sqlx.DB, error) {
 		c.DbHost, c.DBPort, c.DBUser, c.DBPass, c.DBName)
 
 	return sqlx.Connect("postgres", connInfo)
-
 }
