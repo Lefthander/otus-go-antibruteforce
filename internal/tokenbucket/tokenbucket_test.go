@@ -25,7 +25,7 @@ const (
 func TestStillBucket(t *testing.T) {
 	capacity := 5
 
-	fillRate := 1 * time.Second
+	fillRate := WAITTIME1 * time.Second
 
 	ctx, done := context.WithCancel(context.Background())
 
@@ -38,6 +38,7 @@ func TestStillBucket(t *testing.T) {
 	}
 
 	time.Sleep(fillRate * WAITTIME3) // Whait for some time
+
 	if tb.Capacity() != tb.Amount() {
 		t.Errorf("Bucket without requests must keep the currentAmoutn=%d equals to defined capacity=%d", tb.Amount(), tb.Capacity())
 	}
@@ -127,7 +128,6 @@ func TestResetBucket(t *testing.T) {
 
 // Test Bucket with Zero Capacity, bucket allways must response Allow = false, and keep consistency capacity & currentAmout == 0
 func TestZeroCapacityBucket(t *testing.T) {
-
 	capacity := 0
 
 	fillRate := WAITTIME1 * time.Millisecond

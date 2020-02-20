@@ -31,30 +31,20 @@ func NewABFService(numberOfLogin, numberOfPassword, numberOfIP uint32, bucketSto
 
 // IsAuthenticate verifies is allow or not to pass the AuthenticationRequest
 func (a *ABFService) IsAuthenticate(ctx context.Context, authRequest entities.AuthenticationRequest) (bool, error) {
-
-	// TODO: Fill the content
-
 	return true, nil
-
 }
 
 // IsIPConform verifies does specified IP included in the filter table either black or white
 func (a *ABFService) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
-	// TODO: Write some code here...
 	return true, nil
 }
 
 // AddIPNetwork adds the net to the white or black table
 func (a *ABFService) AddIPNetwork(ctx context.Context, net net.IPNet, color bool) error {
-
-	// TODO: Do some code )
 	return nil
 }
 
 // DeleteIPNetwork deletes the specified network from the white or black table
 func (a *ABFService) DeleteIPNetwork(ctx context.Context, net net.IPNet, color bool) error {
-
-	// TODO: Do some code here)
 	return nil
-
 }

@@ -75,6 +75,7 @@ func (tb *TokenBucket) Allow() bool {
 		atomic.AddUint32(&tb.currentAmount, ^uint32(0)) // decrease the number of tokens in the bucket
 		return true
 	}
+
 	return false
 }
 
