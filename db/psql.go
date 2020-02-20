@@ -9,7 +9,6 @@ import (
 
 // ConnectDB returns a connection pull to postgres
 func ConnectDB(c *config.ServiceConfig) (*sqlx.DB, error) {
-
 	connInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable",
 		c.DbHost, c.DBPort, c.DBUser, c.DBPass, c.DBName)
 
