@@ -15,7 +15,6 @@ import (
 
 // 1. Create a bucket and check that amount of tokens does not decreased when there are no requests to the bucket.
 func TestStillBucket(t *testing.T) {
-
 	capacity := 5
 
 	fillRate := 1 * time.Second
@@ -31,18 +30,15 @@ func TestStillBucket(t *testing.T) {
 	}
 
 	time.Sleep(fillRate * 3) // Whait for some time
-
 	if tb.Capacity() != tb.Amount() {
 
 		t.Errorf("Bucket without requests must keep the currentAmoutn=%d equals to defined capacity=%d", tb.Amount(), tb.Capacity())
 
 	}
-
 }
 
 // 2. Create a bucket and check that it's possible to get all capacity without any cancelation from the bucket in the burst
 func TestFullBucket(t *testing.T) {
-
 	var allow bool
 
 	capacity := 5
@@ -68,7 +64,6 @@ func TestFullBucket(t *testing.T) {
 
 // 3. Create an empty bucket and check that all following requests will be disallowed.
 func TestEmptyBucket(t *testing.T) {
-
 	capacity := 3
 
 	fillRate := 5 * time.Second
@@ -94,13 +89,11 @@ func TestEmptyBucket(t *testing.T) {
 			t.Error("Bucket must not allow while it empty")
 			break
 		}
-
 	}
 }
 
 // 5. Create a bucket with significant capacity, start taking tokens from it, reset bucket. Ensure that bucket returns to initial state: Capacity == currentAmount
 func TestResetBucket(t *testing.T) {
-
 	capacity := 100
 
 	fillRate := 1 * time.Second
@@ -154,12 +147,10 @@ func TestZeroCapacityBucket(t *testing.T) {
 	if !(tb.Capacity() == tb.Amount()) && tb.Amount() != 0 {
 		t.Errorf("Bucket is inconsistent capacity=%d, currentAmount=%d", tb.Capacity(), tb.Amount())
 	}
-
 }
 
 // Test Bucket with Zero fillRate, bucket must response Allow = true for all request belongs his capacity and after that respond Allow = false for forever
 func TestZeroFillRateBucket(t *testing.T) {
-
 	capacity := 10
 
 	fillRate := 0 * time.Millisecond

@@ -9,13 +9,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-/* type FilterKeeper interface {
-	AddIPNetwork(ctx context.Context, network net.IPNet, color bool) error    // Add to IPFilter table color: true - white , false - black
-	DeleteIPNetwork(ctx context.Context, network net.IPNet, color bool) error // Delete network or IP from the IPFilter table, color: true - white, false - black
-	IsIPConform(ctx context.Context, ip net.IP) (bool, error)                 // Verify does the IP address belongs to White/Black table, if belongs true, error = white/black
-	ListIPNetworks(ctx context.Context, color bool) ([]string, error)         // Dump all records in the table , white table - color = true, black color = false
-} */
-
 // IPFilterDB implements interface FilterKeeper to store IP B/W tables in the SQL DB (Postgress)
 type IPFilterDB struct {
 	*sqlx.DB
@@ -32,13 +25,14 @@ func (d *IPFilterDB) AddIPNetwork(ctx context.Context, network net.IPNet, color 
 	case true:
 		request := `INSERT INTO ip_white_list (network) VALUES ($1)`
 		_, err := d.DB.ExecContext(ctx, request, network.String())
+
 		if err != nil {
 			return err
 		}
-
 	case false:
 		request := `INSERT INTO ip_black_list (network) VALUES ($1)`
 		_, err := d.DB.ExecContext(ctx, request, network.String())
+
 		if err != nil {
 			return err
 		}
@@ -52,17 +46,17 @@ func (d *IPFilterDB) DeleteIPNetwork(ctx context.Context, network net.IPNet, col
 	case true:
 		request := `DELETE FROM ip_white_list WHERE network=$1`
 		_, err := d.DB.ExecContext(ctx, request, network.String())
+
 		if err != nil {
 			return err
 		}
-
 	case false:
 		request := `DELETE FROM ip_black_list WHERE network=$1`
 		_, err := d.DB.ExecContext(ctx, request, network.String())
+
 		if err != nil {
 			return err
 		}
-
 	}
 	return nil
 }

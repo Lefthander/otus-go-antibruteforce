@@ -27,7 +27,8 @@ type TokenBucket struct {
 
 // NewTokenBucket creates a new instance of TokenBucket
 func NewTokenBucket(ctx context.Context, capacity uint32, rate time.Duration) (*TokenBucket, error) {
-	// To protect for inaccurate function usage. In case of rate == 0  NewTicker will be created with a very loooong period of tick ~ 290 years.
+	// To protect for inaccurate function usage. In case of rate == 0  NewTicker will be created with a very
+	// loooong period of tick ~ 290 years.
 	// In other terms ticker will not run in closest time.
 	if rate == 0 {
 		return nil, errors.ErrTokenBucketInvalidFillRate
@@ -55,12 +56,15 @@ func NewTokenBucket(ctx context.Context, capacity uint32, rate time.Duration) (*
 				if tb.currentAmount == tb.capacity { //Token Bucken is full all next tokens will be discarded
 					continue
 				}
+
 				atomic.AddUint32(&tb.currentAmount, 1) // Add one token to the bucket
+
 			default: // Added to avoid blocking when we have looong time period for ticker
 				continue
 			}
 		}
 	}(tb)
+
 	return tb, nil
 }
 
@@ -90,5 +94,6 @@ func (tb *TokenBucket) Capacity() uint32 {
 func (tb *TokenBucket) Amount() uint32 {
 	tb.mx.Lock()
 	defer tb.mx.Unlock()
+
 	return tb.currentAmount
 }

@@ -33,17 +33,21 @@ func (ipf *IPFilterMemory) IsIPConform(ctx context.Context, ip net.IP) (bool, er
 	ipf.mxWhite.RLock()
 	defer ipf.mxWhite.RUnlock()
 	for _, v := range ipf.WhiteIPList.Nets {
+
 		if v.Contains(ip) {
 			return true, errors.ErrIPFilterMatchedWhiteList
 		}
+
 	}
 
 	ipf.mxBlack.RLock()
 	defer ipf.mxBlack.RUnlock()
 	for _, v := range ipf.BlackIPList.Nets {
+
 		if v.Contains(ip) {
 			return true, errors.ErrIPFilterMatchedBlackList
 		}
+
 	}
 	return false, errors.ErrIPFilterNoMatch
 }
@@ -52,6 +56,7 @@ func (ipf *IPFilterMemory) IsIPConform(ctx context.Context, ip net.IP) (bool, er
 func (ipf *IPFilterMemory) AddIPNetwork(ctx context.Context, network net.IPNet, color bool) error {
 
 	switch color {
+
 	case true:
 		ipf.mxWhite.Lock()
 		defer ipf.mxWhite.Unlock()
@@ -75,6 +80,7 @@ func (ipf *IPFilterMemory) AddIPNetwork(ctx context.Context, network net.IPNet, 
 func (ipf *IPFilterMemory) DeleteIPNetwork(ctx context.Context, network net.IPNet, color bool) error {
 
 	switch color {
+
 	case true:
 		ipf.mxWhite.Lock()
 		defer ipf.mxWhite.Unlock()
