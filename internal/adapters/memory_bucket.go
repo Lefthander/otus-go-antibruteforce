@@ -53,7 +53,6 @@ func (tb *TokenBucketMemory) CreateBucket(ctx context.Context, id uuid.UUID, rat
 
 // DeleteBucket removes the specified bucket from the storage
 func (tb *TokenBucketMemory) DeleteBucket(ctx context.Context, id uuid.UUID) error {
-
 	_, err := tb.GetBucket(ctx, id)
 
 	if err != nil {

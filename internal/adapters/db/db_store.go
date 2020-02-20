@@ -116,5 +116,6 @@ func (d *IPFilterDB) ListIPNetworks(ctx context.Context, color bool) ([]string, 
 			return nil, err
 		}
 	}
+
 	return nets, nil
 }

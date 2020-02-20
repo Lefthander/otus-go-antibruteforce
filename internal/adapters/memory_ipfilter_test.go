@@ -22,7 +22,7 @@ func TestIPFilterMemory(t *testing.T) {
 	_, testnet3, _ := net.ParseCIDR("30.30.0.0/24")
 
 	t.Run("Add network to White list", func(t *testing.T) {
-		ipstore.AddIPNetwork(ctx, *testnet1, true)
+		_ = ipstore.AddIPNetwork(ctx, *testnet1, true)
 		ipl, err := ipstore.ListIPNetworks(ctx, true)
 		assert.Equal(t, nil, err)
 		assert.Contains(t, ipl, testnet1.String())
@@ -35,7 +35,7 @@ func TestIPFilterMemory(t *testing.T) {
 	})
 
 	t.Run("Add network to Black list", func(t *testing.T) {
-		ipstore.AddIPNetwork(ctx, *testnet2, false)
+		_ = ipstore.AddIPNetwork(ctx, *testnet2, false)
 		ipl, err := ipstore.ListIPNetworks(ctx, false)
 		assert.Equal(t, nil, err)
 		assert.Contains(t, ipl, testnet2.String())

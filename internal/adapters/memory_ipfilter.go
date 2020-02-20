@@ -29,10 +29,8 @@ func NewIPFilterMemory() *IPFilterMemory {
 
 // IsIPConform verifies does the IP address belongs to White/Black table, if belongs true, error = white/black
 func (ipf *IPFilterMemory) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
-
 	ipf.mxWhite.RLock()
 	defer ipf.mxWhite.RUnlock()
-
 	for _, v := range ipf.WhiteIPList.Nets {
 
 		if v.Contains(ip) {
@@ -130,5 +128,6 @@ func (ipf *IPFilterMemory) ListIPNetworks(ctx context.Context, color bool) ([]st
 
 		return iplist, nil
 	}
+
 	return nil, nil
 }
