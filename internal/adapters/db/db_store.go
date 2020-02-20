@@ -63,9 +63,6 @@ func (d *IPFilterDB) DeleteIPNetwork(ctx context.Context, network net.IPNet, col
 
 // IsIPConform verifies does the IP address belongs to White/Black table, if belongs true, error = white/black
 func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
-
-	// TODO:
-
 	requestWhite := `SELECT * FROM ip_white_list WHERE ipaddr=$1 << ANY (network)`
 
 	wnets := make([]string, 0)
@@ -97,9 +94,6 @@ func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 
 // ListIPNetworks in specified by color (B/W) table
 func (d *IPFilterDB) ListIPNetworks(ctx context.Context, color bool) ([]string, error) {
-	// TODO:
-	//var result sql.Result
-
 	nets := make([]string, 0)
 
 	switch color {
