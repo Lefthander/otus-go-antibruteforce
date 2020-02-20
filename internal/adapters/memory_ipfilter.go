@@ -52,7 +52,6 @@ func (ipf *IPFilterMemory) IsIPConform(ctx context.Context, ip net.IP) (bool, er
 // AddIPNetwork creates a new network in the B/W table, return error in case of network already exists
 func (ipf *IPFilterMemory) AddIPNetwork(ctx context.Context, network net.IPNet, color bool) error {
 	switch color {
-
 	case true:
 		ipf.mxWhite.Lock()
 		defer ipf.mxWhite.Unlock()
@@ -76,9 +75,7 @@ func (ipf *IPFilterMemory) AddIPNetwork(ctx context.Context, network net.IPNet, 
 
 // DeleteIPNetwork from the B/W table in accordance with Color Flag, returns error in case of request network not found
 func (ipf *IPFilterMemory) DeleteIPNetwork(ctx context.Context, network net.IPNet, color bool) error {
-
 	switch color {
-
 	case true:
 		ipf.mxWhite.Lock()
 		defer ipf.mxWhite.Unlock()
