@@ -11,8 +11,10 @@ import (
 
 // Algorithm description
 // A token is added to the bucket every 1/r seconds
-// The bucket can hold at the most Capacity tokens. If tokens arrives when the bucket is full, it is discarded.
-// when request arrives if at least one token is in the bucket, 1 token removed from the bucket, and the request is allowed.
+// The bucket can hold at the most Capacity tokens. If tokens arrives when the
+// bucket is full, it is discarded.
+// when request arrives if at least one token is in the bucket, 1 token removed
+// from the bucket, and the request is allowed.
 // if 0 tokens in the bucket, no tokens removed and the request is considered as not allowed.
 
 // TokenBucket contains elements to implement the algorithm
