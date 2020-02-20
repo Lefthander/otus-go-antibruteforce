@@ -32,22 +32,22 @@ func (ipf *IPFilterMemory) IsIPConform(ctx context.Context, ip net.IP) (bool, er
 
 	ipf.mxWhite.RLock()
 	defer ipf.mxWhite.RUnlock()
+
 	for _, v := range ipf.WhiteIPList.Nets {
 
 		if v.Contains(ip) {
 			return true, errors.ErrIPFilterMatchedWhiteList
 		}
-
 	}
 
 	ipf.mxBlack.RLock()
 	defer ipf.mxBlack.RUnlock()
+
 	for _, v := range ipf.BlackIPList.Nets {
 
 		if v.Contains(ip) {
 			return true, errors.ErrIPFilterMatchedBlackList
 		}
-
 	}
 	return false, errors.ErrIPFilterNoMatch
 }
@@ -60,6 +60,7 @@ func (ipf *IPFilterMemory) AddIPNetwork(ctx context.Context, network net.IPNet, 
 	case true:
 		ipf.mxWhite.Lock()
 		defer ipf.mxWhite.Unlock()
+
 		if _, ok := ipf.WhiteIPList.Nets[network.String()]; !ok {
 			ipf.WhiteIPList.Nets[network.String()] = network
 			return nil
@@ -67,11 +68,11 @@ func (ipf *IPFilterMemory) AddIPNetwork(ctx context.Context, network net.IPNet, 
 	case false:
 		ipf.mxBlack.Lock()
 		defer ipf.mxBlack.Unlock()
+
 		if _, ok := ipf.BlackIPList.Nets[network.String()]; !ok {
 			ipf.BlackIPList.Nets[network.String()] = network
 			return nil
 		}
-
 	}
 	return errors.ErrIPFilterNetworkAlreadyExists
 }
@@ -84,6 +85,7 @@ func (ipf *IPFilterMemory) DeleteIPNetwork(ctx context.Context, network net.IPNe
 	case true:
 		ipf.mxWhite.Lock()
 		defer ipf.mxWhite.Unlock()
+
 		if _, ok := ipf.WhiteIPList.Nets[network.String()]; ok {
 			delete(ipf.WhiteIPList.Nets, network.String())
 			return nil
@@ -91,6 +93,7 @@ func (ipf *IPFilterMemory) DeleteIPNetwork(ctx context.Context, network net.IPNe
 	case false:
 		ipf.mxBlack.Lock()
 		defer ipf.mxBlack.Unlock()
+
 		if _, ok := ipf.BlackIPList.Nets[network.String()]; ok {
 			delete(ipf.BlackIPList.Nets, network.String())
 			return nil
@@ -108,6 +111,7 @@ func (ipf *IPFilterMemory) ListIPNetworks(ctx context.Context, color bool) ([]st
 	case true:
 		ipf.mxWhite.Lock()
 		defer ipf.mxWhite.Unlock()
+
 		for k := range ipf.WhiteIPList.Nets {
 			iplist = append(iplist, k)
 		}
@@ -115,6 +119,7 @@ func (ipf *IPFilterMemory) ListIPNetworks(ctx context.Context, color bool) ([]st
 	case false:
 		ipf.mxBlack.Lock()
 		defer ipf.mxBlack.Unlock()
+
 		for k := range ipf.BlackIPList.Nets {
 			iplist = append(iplist, k)
 		}

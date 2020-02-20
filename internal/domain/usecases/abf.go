@@ -18,7 +18,8 @@ type ABFService struct {
 }
 
 // NewABFService creates a new instance of Antibruteforce service
-func NewABFService(numberOfLogin, numberOfPassword, numberOfIP uint32, bucketStorage interfaces.BucketKeeper, filterStorage interfaces.FilterKeeper) *ABFService {
+func NewABFService(numberOfLogin, numberOfPassword, numberOfIP uint32, bucketStorage interfaces.BucketKeeper,
+	filterStorage interfaces.FilterKeeper) *ABFService {
 	return &ABFService{
 		ConstraintN:     numberOfLogin,
 		ConstraintM:     numberOfPassword,
