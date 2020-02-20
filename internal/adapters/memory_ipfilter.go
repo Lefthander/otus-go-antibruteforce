@@ -32,7 +32,6 @@ func (ipf *IPFilterMemory) IsIPConform(ctx context.Context, ip net.IP) (bool, er
 	ipf.mxWhite.RLock()
 	defer ipf.mxWhite.RUnlock()
 	for _, v := range ipf.WhiteIPList.Nets {
-
 		if v.Contains(ip) {
 			return true, errors.ErrIPFilterMatchedWhiteList
 		}
@@ -42,7 +41,6 @@ func (ipf *IPFilterMemory) IsIPConform(ctx context.Context, ip net.IP) (bool, er
 	defer ipf.mxBlack.RUnlock()
 
 	for _, v := range ipf.BlackIPList.Nets {
-
 		if v.Contains(ip) {
 			return true, errors.ErrIPFilterMatchedBlackList
 		}
@@ -53,7 +51,6 @@ func (ipf *IPFilterMemory) IsIPConform(ctx context.Context, ip net.IP) (bool, er
 
 // AddIPNetwork creates a new network in the B/W table, return error in case of network already exists
 func (ipf *IPFilterMemory) AddIPNetwork(ctx context.Context, network net.IPNet, color bool) error {
-
 	switch color {
 
 	case true:
