@@ -68,7 +68,7 @@ func TestFullBucket(t *testing.T) {
 
 	// Gets tokens one by one in number of capacity
 	for i := 0; i < capacity-1; i++ {
-		allow = tb.Allow()
+		allow = tb.Allow(ctx)
 		if !allow {
 			t.Error("Full TokenBucket must allow all requests regading its capacity")
 		}
@@ -94,12 +94,12 @@ func TestEmptyBucket(t *testing.T) {
 
 	// Make sure that bucket is empty
 	for i := 0; i < capacity-1; i++ {
-		tb.Allow()
+		tb.Allow(ctx)
 	}
 
 	// While bucket is empty the response must be false
 	for tb.Amount() == 0 {
-		if tb.Allow() {
+		if tb.Allow(ctx) {
 			t.Error("Bucket must not allow while it empty")
 			break
 		}
@@ -124,11 +124,11 @@ func TestResetBucket(t *testing.T) {
 	}
 
 	for i := 0; i < 50; i++ {
-		tb.Allow()
+		tb.Allow(ctx)
 	}
 
 	if tb.Amount() != tb.Capacity() {
-		tb.Reset()
+		tb.Reset(ctx)
 
 		if tb.Amount() != tb.Capacity() {
 			t.Errorf("The bucket must has the capacity=%d and amount=%d are equals after the reset!",
@@ -155,7 +155,7 @@ func TestZeroCapacityBucket(t *testing.T) {
 	}
 
 	for i := 0; i < 50; i++ {
-		if tb.Allow() {
+		if tb.Allow(ctx) {
 			t.Error("Zero capacity bucket must allways response with false")
 		}
 	}

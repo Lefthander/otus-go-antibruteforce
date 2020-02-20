@@ -72,7 +72,7 @@ func NewTokenBucket(ctx context.Context, capacity uint32, rate time.Duration) (*
 
 // Allow returns true in case we have tokens in the bucket. One authorization event has a weight of one token
 // When it is allowed to pass, we decrese the CurrentAmount of tokens by 1
-func (tb *TokenBucket) Allow() bool {
+func (tb *TokenBucket) Allow(ctx context.Context) bool {
 	if tb.currentAmount > 0 { // Bucket is not empty
 		atomic.AddUint32(&tb.currentAmount, ^uint32(0)) // decrease the number of tokens in the bucket
 		return true
@@ -82,7 +82,7 @@ func (tb *TokenBucket) Allow() bool {
 }
 
 // Reset the bucket to the initial state
-func (tb *TokenBucket) Reset() {
+func (tb *TokenBucket) Reset(ctx context.Context) {
 	tb.mx.Lock()
 	tb.currentAmount = tb.capacity
 	tb.mx.Unlock()

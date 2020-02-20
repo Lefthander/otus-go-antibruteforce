@@ -10,5 +10,6 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/viper v1.6.2
 	github.com/stretchr/testify v1.4.0
+	go.uber.org/zap v1.10.0
 	google.golang.org/grpc v1.27.1
 )

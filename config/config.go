@@ -13,6 +13,7 @@ type ServiceConfig struct {
 	ConstraintN uint32
 	ConstraintM uint32
 	ConstraintK uint32
+	TimeOut     uint32
 	DbHost      string
 	DBPort      string
 	DBUser      string

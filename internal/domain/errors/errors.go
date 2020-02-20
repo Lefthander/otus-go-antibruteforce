@@ -28,4 +28,12 @@ var (
 
 	// ErrIPFilterNetworkNotFound appears when there is no provided network found
 	ErrIPFilterNetworkNotFound = errors.New("no such network found")
+	// ErrAuthRequestLoginMissed appears when the authentication request has no login defined
+	ErrAuthRequestLoginMissed = errors.New("login is missed in the request")
+	// ErrAuthRequestPasswordMissed appears when the authentication request has no password defined
+	ErrAuthRequestPasswordMissed = errors.New("password is missed in the request")
+	// ErrAuthRequestIPMissed appears when the authentication request has no ip address defined
+	ErrAuthRequestIPMissed = errors.New("ip address is missed in the request")
+	// ErrNoMappingFound appears when there is no match in UUIDTable found
+	ErrNoMappingFound = errors.New("no matching found between value and UUID")
 )
