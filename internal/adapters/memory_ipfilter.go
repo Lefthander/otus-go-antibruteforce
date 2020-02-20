@@ -31,6 +31,7 @@ func NewIPFilterMemory() *IPFilterMemory {
 func (ipf *IPFilterMemory) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 	ipf.mxWhite.RLock()
 	defer ipf.mxWhite.RUnlock()
+
 	for _, v := range ipf.WhiteIPList.Nets {
 		if v.Contains(ip) {
 			return true, errors.ErrIPFilterMatchedWhiteList
@@ -99,7 +100,6 @@ func (ipf *IPFilterMemory) DeleteIPNetwork(ctx context.Context, network net.IPNe
 
 // ListIPNetworks in specified by color (B/W) table
 func (ipf *IPFilterMemory) ListIPNetworks(ctx context.Context, color bool) ([]string, error) {
-
 	var iplist []string
 
 	switch color {

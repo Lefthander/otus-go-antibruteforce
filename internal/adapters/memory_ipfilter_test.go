@@ -10,7 +10,6 @@ import (
 )
 
 func TestIPFilterMemory(t *testing.T) {
-
 	ctx := context.Background()
 
 	ipstore := NewIPFilterMemory()

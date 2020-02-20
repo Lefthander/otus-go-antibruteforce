@@ -11,7 +11,6 @@ import (
 )
 
 func TestTockenBucketMemory(t *testing.T) {
-
 	tb := NewTokenBucketMemory()
 
 	ctx := context.Background()
