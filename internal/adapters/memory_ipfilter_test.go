@@ -32,7 +32,6 @@ func TestIPFilterMemory(t *testing.T) {
 		flag, err := ipstore.IsIPConform(ctx, net.ParseIP("10.10.0.1"))
 		assert.Equal(t, true, flag)
 		assert.Equal(t, errors.ErrIPFilterMatchedWhiteList, err)
-
 	})
 
 	t.Run("Add network to Black list", func(t *testing.T) {
@@ -40,20 +39,18 @@ func TestIPFilterMemory(t *testing.T) {
 		ipl, err := ipstore.ListIPNetworks(ctx, false)
 		assert.Equal(t, nil, err)
 		assert.Contains(t, ipl, testnet2.String())
-
 	})
 
 	t.Run("Check black list for defined network", func(t *testing.T) {
 		flag, err := ipstore.IsIPConform(ctx, net.ParseIP("20.20.0.1"))
 		assert.Equal(t, true, flag)
 		assert.Equal(t, errors.ErrIPFilterMatchedBlackList, err)
-
 	})
+
 	t.Run("Check IP list from the undefined network", func(t *testing.T) {
 		flag, err := ipstore.IsIPConform(ctx, net.ParseIP("30.30.0.1"))
 		assert.Equal(t, false, flag)
 		assert.Equal(t, errors.ErrIPFilterNoMatch, err)
-
 	})
 
 	t.Run("Delete defined network from White list", func(t *testing.T) {

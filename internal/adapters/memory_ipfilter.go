@@ -49,6 +49,7 @@ func (ipf *IPFilterMemory) IsIPConform(ctx context.Context, ip net.IP) (bool, er
 			return true, errors.ErrIPFilterMatchedBlackList
 		}
 	}
+
 	return false, errors.ErrIPFilterNoMatch
 }
 
@@ -74,6 +75,7 @@ func (ipf *IPFilterMemory) AddIPNetwork(ctx context.Context, network net.IPNet, 
 			return nil
 		}
 	}
+
 	return errors.ErrIPFilterNetworkAlreadyExists
 }
 
@@ -99,6 +101,7 @@ func (ipf *IPFilterMemory) DeleteIPNetwork(ctx context.Context, network net.IPNe
 			return nil
 		}
 	}
+
 	return errors.ErrIPFilterNetworkNotFound
 }
 

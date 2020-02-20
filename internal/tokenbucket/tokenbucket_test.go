@@ -45,11 +45,13 @@ func TestStillBucket(t *testing.T) {
 	time.Sleep(fillRate * WAITTIME3) // Whait for some time
 
 	if tb.Capacity() != tb.Amount() {
-		t.Errorf("Bucket without requests must keep the currentAmoutn=%d equals to defined capacity=%d", tb.Amount(), tb.Capacity())
+		t.Errorf("Bucket without requests must keep the currentAmoutn=%d equals to defined capacity=%d",
+			tb.Amount(), tb.Capacity())
 	}
 }
 
-// 2. Create a bucket and check that it's possible to get all capacity without any cancelation from the bucket in the burst
+// 2. Create a bucket and check that it's possible to get all capacity without any cancelation from the
+//    bucket in the burst
 func TestFullBucket(t *testing.T) {
 	var allow bool
 
@@ -129,7 +131,8 @@ func TestResetBucket(t *testing.T) {
 		tb.Reset()
 
 		if tb.Amount() != tb.Capacity() {
-			t.Errorf("The bucket must has the capacity=%d and amount=%d are equals after the reset!", tb.Capacity(), tb.Amount())
+			t.Errorf("The bucket must has the capacity=%d and amount=%d are equals after the reset!",
+				tb.Capacity(), tb.Amount())
 		}
 	}
 }
