@@ -1,7 +1,6 @@
 package adapters
 
 import (
-	"context"
 	"sync"
 
 	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/errors"
@@ -24,8 +23,8 @@ func NewUUIDTable() *UUIDTable {
 
 // AddToTable adds a new credential to the table, in case if it's already exists
 // returns it's UUID
-func (u *UUIDTable) AddToTable(ctx context.Context, value string) uuid.UUID {
-	if u.isPresentInTable(ctx, value) {
+func (u *UUIDTable) AddToTable(value string) uuid.UUID {
+	if u.isPresentInTable(value) {
 		return u.table[value]
 	}
 
@@ -38,8 +37,8 @@ func (u *UUIDTable) AddToTable(ctx context.Context, value string) uuid.UUID {
 
 // DeleteFromTable deletes a credential from the table, in case if it's not found
 // returns corresponding error
-func (u *UUIDTable) DeleteFromTable(ctx context.Context, value string) error {
-	if u.isPresentInTable(ctx, value) {
+func (u *UUIDTable) DeleteFromTable(value string) error {
+	if u.isPresentInTable(value) {
 		u.mx.RLock()
 		delete(u.table, value)
 		u.mx.RUnlock()
@@ -50,7 +49,7 @@ func (u *UUIDTable) DeleteFromTable(ctx context.Context, value string) error {
 	return errors.ErrNoMappingFound
 }
 
-func (u *UUIDTable) isPresentInTable(ctx context.Context, value string) bool {
+func (u *UUIDTable) isPresentInTable(value string) bool {
 	u.mx.Lock()
 	defer u.mx.Unlock()
 

@@ -66,13 +66,9 @@ func validateAuthRequest(a entities.AuthenticationRequest) error {
 	return nil
 }
 
-// CheckBuckets verify the Authentication Request againsts token buckets, create them if necessary
-func (a *ABFService) CheckBuckets(ctx context.Context, request entities.AuthenticationRequest) (bool, error) {
-
-	loginID := a.loginMap.AddToTable(ctx, request.Login)
-	passwdID := a.passwdMap.AddToTable(ctx, request.Password)
-	ipID := a.ipMap.AddToTable(ctx, request.IPAddress)
-
+// CheckBucketLogin verify the Authentication Request againsts token buckets, create them if necessary
+func (a *ABFService) CheckBucketLogin(ctx context.Context, request string) (bool, error) {
+	loginID := a.loginMap.AddToTable(request)
 	_, err := a.BucketStorage.GetBucket(ctx, loginID)
 
 	if err == errors.ErrTokenBucketNotFound {
@@ -97,7 +93,13 @@ func (a *ABFService) CheckBuckets(ctx context.Context, request entities.Authenti
 
 	isloginOK := loginbucket.Allow(ctx)
 
-	_, err = a.BucketStorage.GetBucket(ctx, passwdID)
+	return isloginOK, nil
+}
+
+// CheckBucketPassword verify the Authentication Request againsts token buckets, create them if necessary
+func (a *ABFService) CheckBucketPassword(ctx context.Context, request string) (bool, error) {
+	passwdID := a.passwdMap.AddToTable(request)
+	_, err := a.BucketStorage.GetBucket(ctx, passwdID)
 
 	if err == errors.ErrTokenBucketNotFound {
 		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Minute/time.Duration(a.config.ConstraintM))
@@ -121,7 +123,13 @@ func (a *ABFService) CheckBuckets(ctx context.Context, request entities.Authenti
 
 	ispasswdOK := passwdbucket.Allow(ctx)
 
-	_, err = a.BucketStorage.GetBucket(ctx, ipID)
+	return ispasswdOK, nil
+}
+
+// CheckBucketIP verify the Authentication Request againsts token buckets, create them if necessary
+func (a *ABFService) CheckBucketIP(ctx context.Context, request string) (bool, error) {
+	ipID := a.ipMap.AddToTable(request)
+	_, err := a.BucketStorage.GetBucket(ctx, ipID)
 
 	if err == errors.ErrTokenBucketNotFound {
 		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Minute/time.Duration(a.config.ConstraintK))
@@ -145,7 +153,7 @@ func (a *ABFService) CheckBuckets(ctx context.Context, request entities.Authenti
 
 	isipOK := ipbucket.Allow(ctx)
 
-	return isloginOK && ispasswdOK && isipOK, nil
+	return isipOK, nil
 }
 
 // IsAuthenticate verifies is allow or not to pass the AuthenticationRequest
@@ -166,13 +174,25 @@ func (a *ABFService) IsAuthenticate(ctx context.Context, authRequest entities.Au
 		return false, errors.ErrIPFilterMatchedBlackList
 	}
 
-	flag, err = a.CheckBuckets(ctx, authRequest)
+	loginOk, err := a.CheckBucketLogin(ctx, authRequest.Login)
 
-	if !flag {
+	if err != nil {
 		return false, err
 	}
 
-	return flag, nil
+	passwordOk, err := a.CheckBucketLogin(ctx, authRequest.Password)
+
+	if err != nil {
+		return false, err
+	}
+
+	ipaddressOk, err := a.CheckBucketLogin(ctx, authRequest.IPAddress)
+
+	if err != nil {
+		return false, err
+	}
+
+	return loginOk && passwordOk && ipaddressOk, nil
 }
 
 // IsIPConform verifies does specified IP included in the filter table either black or white
@@ -217,8 +237,8 @@ func (a *ABFService) DeleteIPNetwork(ctx context.Context, net net.IPNet, color b
 
 // ResetLimits clear corresponding buckets for pair of login && ip
 func (a *ABFService) ResetLimits(ctx context.Context, request entities.AuthenticationRequest) error {
-	loginID := a.loginMap.AddToTable(ctx, request.Login)
-	ipID := a.ipMap.AddToTable(ctx, request.IPAddress)
+	loginID := a.loginMap.AddToTable(request.Login)
+	ipID := a.ipMap.AddToTable(request.IPAddress)
 	loginbucket, err := a.BucketStorage.GetBucket(ctx, loginID)
 
 	if err != nil {
