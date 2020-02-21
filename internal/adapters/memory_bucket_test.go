@@ -28,7 +28,7 @@ func TestTockenBucketMemory(t *testing.T) {
 	})
 
 	t.Run("Verify CreateBucket()", func(t *testing.T) {
-		err := tb.CreateBucket(ctx, testID, 1, &mocks.DummyBucket{})
+		err := tb.CreateBucket(ctx, testID, &mocks.DummyBucket{})
 		if err != nil {
 			t.Error("Cannot create a bucket in the store", err)
 		}
@@ -36,7 +36,7 @@ func TestTockenBucketMemory(t *testing.T) {
 	})
 
 	t.Run("Verify Create an existing bucket", func(t *testing.T) {
-		err := tb.CreateBucket(ctx, testID, 1, &mocks.DummyBucket{})
+		err := tb.CreateBucket(ctx, testID, &mocks.DummyBucket{})
 		assert.Equal(t, errors.ErrTokenBucketAlreadyExists, err)
 	})
 

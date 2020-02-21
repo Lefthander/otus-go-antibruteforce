@@ -36,8 +36,7 @@ func (tb *TokenBucketMemory) GetBucket(ctx context.Context, id uuid.UUID) (inter
 }
 
 // CreateBucket in memory the instace of Bucket
-func (tb *TokenBucketMemory) CreateBucket(ctx context.Context, id uuid.UUID, rate uint32,
-	bucket interfaces.Bucket) error {
+func (tb *TokenBucketMemory) CreateBucket(ctx context.Context, id uuid.UUID, bucket interfaces.Bucket) error {
 	_, err := tb.GetBucket(ctx, id)
 
 	if err == nil {

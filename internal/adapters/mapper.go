@@ -22,27 +22,26 @@ func NewUUIDTable() *UUIDTable {
 	}
 }
 
-// AddToTable adds a new credential to the table, in case if it's already exists returns it's UUID & corresponding error
+// AddToTable adds a new credential to the table, in case if it's already exists
+// returns it's UUID
 func (u *UUIDTable) AddToTable(ctx context.Context, value string) uuid.UUID {
-	u.mx.Lock()
-	defer u.mx.Unlock()
-
 	if u.isPresentInTable(ctx, value) {
 		return u.table[value]
 	}
 
+	u.mx.RLock()
 	u.table[value] = uuid.New()
-
+	u.mx.RUnlock()
 	return u.table[value]
 }
 
-// DeleteFromTable deletes a credential to the table, in case if it's already exists returns it's UUID & corresponding error
+// DeleteFromTable deletes a credential from the table, in case if it's not found
+// returns corresponding error
 func (u *UUIDTable) DeleteFromTable(ctx context.Context, value string) error {
-	u.mx.RLock()
-	defer u.mx.RUnlock()
-
 	if u.isPresentInTable(ctx, value) {
+		u.mx.RLock()
 		delete(u.table, value)
+		u.mx.RUnlock()
 		return nil
 	}
 
@@ -50,9 +49,23 @@ func (u *UUIDTable) DeleteFromTable(ctx context.Context, value string) error {
 }
 
 func (u *UUIDTable) isPresentInTable(ctx context.Context, value string) bool {
+	u.mx.Lock()
+	defer u.mx.Unlock()
+
 	if _, ok := u.table[value]; ok {
 		return true
 	}
 
 	return false
+}
+
+// Clear delete all records from the table
+func (u *UUIDTable) Clear() {
+	u.mx.Lock()
+
+	for k := range u.table {
+		delete(u.table, k)
+	}
+
+	u.mx.Unlock()
 }
