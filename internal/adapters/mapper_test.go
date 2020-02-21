@@ -10,7 +10,6 @@ import (
 )
 
 func TestMapper(t *testing.T) {
-
 	var id uuid.UUID
 
 	tb := NewUUIDTable()

@@ -14,7 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// 2DO: Implement the mechanism of cleareance of longtime unused buckets
+// 2DO: Implement the mechanism of clearance of longtime unused buckets
 
 // ABFService is a model of high level representation of Antibruteforce service
 type ABFService struct {
@@ -49,7 +49,7 @@ func NewABFService(numberOfLogin, numberOfPassword, numberOfIP uint32, bucketSto
 	return abf
 }
 
-// validateAuthRequest is a service function just to verify the consitency of AuthRequest
+// validateAuthRequest is a service function just to verify the consistency of AuthRequest
 func validateAuthRequest(a entities.AuthenticationRequest) error {
 	if a.Login == "" {
 		return errors.ErrAuthRequestLoginMissed
@@ -66,7 +66,7 @@ func validateAuthRequest(a entities.AuthenticationRequest) error {
 	return nil
 }
 
-// CheckBuckets verify the Authentication Request againsts token buckets, create them if neccesary
+// CheckBuckets verify the Authentication Request againsts token buckets, create them if necessary
 func (a *ABFService) CheckBuckets(ctx context.Context, request entities.AuthenticationRequest) (bool, error) {
 
 	loginID := a.loginMap.AddToTable(ctx, request.Login)
@@ -74,34 +74,47 @@ func (a *ABFService) CheckBuckets(ctx context.Context, request entities.Authenti
 	ipID := a.ipMap.AddToTable(ctx, request.IPAddress)
 
 	_, err := a.BucketStorage.GetBucket(ctx, loginID)
+
 	if err == errors.ErrTokenBucketNotFound {
-		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Duration(time.Minute/time.Duration(a.config.ConstraintN)))
+		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Minute/time.Duration(a.config.ConstraintN))
+
 		if err != nil {
 			return false, err
 		}
+
 		err = a.BucketStorage.CreateBucket(ctx, loginID, tb)
+
 		if err != nil {
 			return false, err
 		}
 	}
+
 	loginbucket, err := a.BucketStorage.GetBucket(ctx, loginID)
+
 	if err != nil {
 		return false, err
 	}
+
 	isloginOK := loginbucket.Allow(ctx)
 
 	_, err = a.BucketStorage.GetBucket(ctx, passwdID)
+
 	if err == errors.ErrTokenBucketNotFound {
-		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Duration(time.Minute/time.Duration(a.config.ConstraintM)))
+		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Minute/time.Duration(a.config.ConstraintM))
+
 		if err != nil {
 			return false, err
 		}
+
 		err = a.BucketStorage.CreateBucket(ctx, passwdID, tb)
+
 		if err != nil {
 			return false, err
 		}
 	}
+
 	passwdbucket, err := a.BucketStorage.GetBucket(ctx, passwdID)
+
 	if err != nil {
 		return false, err
 	}
@@ -109,17 +122,23 @@ func (a *ABFService) CheckBuckets(ctx context.Context, request entities.Authenti
 	ispasswdOK := passwdbucket.Allow(ctx)
 
 	_, err = a.BucketStorage.GetBucket(ctx, ipID)
+
 	if err == errors.ErrTokenBucketNotFound {
-		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Duration(time.Minute/time.Duration(a.config.ConstraintK)))
+		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Minute/time.Duration(a.config.ConstraintK))
+
 		if err != nil {
 			return false, err
 		}
+
 		err = a.BucketStorage.CreateBucket(ctx, ipID, tb)
+
 		if err != nil {
 			return false, err
 		}
 	}
+
 	ipbucket, err := a.BucketStorage.GetBucket(ctx, ipID)
+
 	if err != nil {
 		return false, err
 	}
@@ -127,7 +146,6 @@ func (a *ABFService) CheckBuckets(ctx context.Context, request entities.Authenti
 	isipOK := ipbucket.Allow(ctx)
 
 	return isloginOK && ispasswdOK && isipOK, nil
-
 }
 
 // IsAuthenticate verifies is allow or not to pass the AuthenticationRequest

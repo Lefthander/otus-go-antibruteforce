@@ -32,6 +32,7 @@ func (u *UUIDTable) AddToTable(ctx context.Context, value string) uuid.UUID {
 	u.mx.RLock()
 	u.table[value] = uuid.New()
 	u.mx.RUnlock()
+
 	return u.table[value]
 }
 
@@ -42,6 +43,7 @@ func (u *UUIDTable) DeleteFromTable(ctx context.Context, value string) error {
 		u.mx.RLock()
 		delete(u.table, value)
 		u.mx.RUnlock()
+
 		return nil
 	}
 
