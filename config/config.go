@@ -11,6 +11,7 @@ import (
 
 // ServiceConfig is a struct to store all configuration parameters of service
 type ServiceConfig struct {
+	LogMode           string
 	ConstraintN       uint32
 	ConstraintM       uint32
 	ConstraintK       uint32
@@ -25,7 +26,7 @@ type ServiceConfig struct {
 }
 
 // GetConfig reads configuration from the provided file
-func (c *ServiceConfig) GetConfig(cfgname string) (*ServiceConfig, error) {
+func GetConfig(cfgname string) (*ServiceConfig, error) {
 	viper.SetConfigName(strings.Split(filepath.Base(cfgname), ".")[0])
 	viper.AddConfigPath(cfgname)
 
