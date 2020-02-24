@@ -24,7 +24,7 @@ const (
 	WAITTIME1    = 1
 	WAITTIME5    = 5
 	WAITTIME0    = 0
-	LIFETIME5MIN = time.Duration(10 * time.Second)
+	LIFETIME5MIN = 10 * time.Second
 )
 
 func TestStillBucket(t *testing.T) {

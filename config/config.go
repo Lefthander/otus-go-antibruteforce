@@ -21,6 +21,7 @@ type ServiceConfig struct {
 	DBPass            string
 	DBName            string
 	BucketIdleTimeOut time.Duration
+	BucketCapacity    uint32
 }
 
 // GetConfig reads configuration from the provided file
