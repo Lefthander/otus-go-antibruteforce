@@ -51,10 +51,13 @@ func (tb *TokenBucketMemory) CreateBucket(ctx context.Context, id string, bucket
 
 	go func(ctx context.Context, id string, tb *TokenBucketMemory, shutdown chan bool) {
 		<-shutdown
+
 		err := tb.DeleteBucket(ctx, id)
+
 		if err != nil {
 			log.Println("Error deleting bucket", id, err)
 		}
+
 		log.Println("Bucket deleted due to idle timeout...", id)
 	}(ctx, id, tb, bucket.GetShutDownChannel())
 

@@ -44,13 +44,13 @@ func TestStillBucket(t *testing.T) {
 		t.Errorf("Bucket without requests must keep the currentAmoutn=%d equals to defined capacity=%d",
 			tb.Amount(), tb.Capacity())
 	}
-
 }
 
 // 2. Create a bucket and check that it's possible to get all capacity without any cancelation from the
 //    bucket in the burst
 func TestFullBucket(t *testing.T) {
 	var allow bool
+
 	capacity := 5
 	fillRate := WAITTIME1 * time.Second // Set a quite long period of refill
 

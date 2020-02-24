@@ -56,11 +56,12 @@ func NewTokenBucket(capacity uint32, rate time.Duration, lifetime time.Duration)
 			select {
 			case <-tb.ticker.C:
 				tb.mx.RLock()
-				if time.Now().Sub(tb.lastAccessTime) > tb.lifeTime {
+				if time.Since(tb.lastAccessTime) > tb.lifeTime {
 					// Inactive timeout exeded - initiate the closure procedure of the bucket.
 					log.Println("Idle timeout exiting...")
 					tb.shutDown <- true
 					tb.mx.RUnlock()
+
 					return
 				}
 				tb.mx.RUnlock()
@@ -68,8 +69,9 @@ func NewTokenBucket(capacity uint32, rate time.Duration, lifetime time.Duration)
 				if tb.currentAmount == tb.capacity { //Token Bucken is full all next tokens will be discarded
 					continue
 				}
+
 				tb.mx.Lock()
-				tb.currentAmount = tb.currentAmount + 1 // Add one token to the bucket
+				tb.currentAmount++ // Add one token to the bucket
 				tb.mx.Unlock()
 			default: // Added to avoid blocking when we have looong time period for ticker
 				continue
@@ -89,7 +91,7 @@ func (tb *TokenBucket) Allow() bool {
 	tb.lastAccessTime = time.Now()
 
 	if tb.currentAmount > 0 { // Bucket is not empty
-		tb.currentAmount = tb.currentAmount - 1 // decrease the number of tokens in the bucket
+		tb.currentAmount-- // decrease the number of tokens in the bucket
 		return true
 	}
 
@@ -112,6 +114,7 @@ func (tb *TokenBucket) Capacity() uint32 {
 func (tb *TokenBucket) GetShutDownChannel() chan bool {
 	tb.mx.Lock()
 	defer tb.mx.Unlock()
+
 	return tb.shutDown
 }
 
