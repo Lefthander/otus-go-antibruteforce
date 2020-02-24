@@ -69,7 +69,8 @@ func (a *ABFService) CheckBucketLogin(ctx context.Context, request string) (bool
 	_, err := a.LoginBucketStorage.GetBucket(ctx, request)
 
 	if err == errors.ErrTokenBucketNotFound {
-		tb, err := tokenbucket.NewTokenBucket(a.config.BucketCapacity, time.Minute/time.Duration(a.config.ConstraintN), a.config.BucketIdleTimeOut)
+		tb, err := tokenbucket.NewTokenBucket(a.config.BucketCapacity,
+			time.Minute/time.Duration(a.config.ConstraintN), a.config.BucketIdleTimeOut)
 
 		if err != nil {
 			return false, err
@@ -98,7 +99,8 @@ func (a *ABFService) CheckBucketPassword(ctx context.Context, request string) (b
 	_, err := a.PasswordBucketStorage.GetBucket(ctx, request)
 
 	if err == errors.ErrTokenBucketNotFound {
-		tb, err := tokenbucket.NewTokenBucket(a.config.BucketCapacity, time.Minute/time.Duration(a.config.ConstraintM), a.config.BucketIdleTimeOut)
+		tb, err := tokenbucket.NewTokenBucket(a.config.BucketCapacity,
+			time.Minute/time.Duration(a.config.ConstraintM), a.config.BucketIdleTimeOut)
 
 		if err != nil {
 			return false, err
@@ -127,7 +129,8 @@ func (a *ABFService) CheckBucketIP(ctx context.Context, request string) (bool, e
 	_, err := a.IPBucketStorage.GetBucket(ctx, request)
 
 	if err == errors.ErrTokenBucketNotFound {
-		tb, err := tokenbucket.NewTokenBucket(a.config.BucketCapacity, time.Minute/time.Duration(a.config.ConstraintK), a.config.BucketIdleTimeOut)
+		tb, err := tokenbucket.NewTokenBucket(a.config.BucketCapacity,
+			time.Minute/time.Duration(a.config.ConstraintK), a.config.BucketIdleTimeOut)
 
 		if err != nil {
 			return false, err
