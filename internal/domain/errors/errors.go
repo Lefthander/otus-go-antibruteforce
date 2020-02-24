@@ -36,4 +36,6 @@ var (
 	ErrAuthRequestIPMissed = errors.New("ip address is missed in the request")
 	// ErrNoMappingFound appears when there is no match in UUIDTable found
 	ErrNoMappingFound = errors.New("no matching found between value and UUID")
+	// ErrNoGrpcError appears when we need to send nil over strign in grpc
+	ErrNoGrpcError = errors.New("Everything is ok")
 )

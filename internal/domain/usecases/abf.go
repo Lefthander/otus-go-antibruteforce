@@ -253,3 +253,13 @@ func (a *ABFService) ResetLimits(ctx context.Context, request entities.Authentic
 
 	return nil
 }
+
+// ListIPNetworks dump specified table (B/W) to slice of strings
+func (a *ABFService) ListIPNetworks(ctx context.Context, color bool) ([]string, error) {
+	ipnets, err := a.IPFilterStorage.ListIPNetworks(ctx, color)
+
+	if err != nil {
+		return nil, err
+	}
+	return ipnets, nil
+}
