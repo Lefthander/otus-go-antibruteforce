@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/Lefthander/otus-go-antibruteforce/config"
-	"github.com/Lefthander/otus-go-antibruteforce/internal/adapters"
 	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/entities"
 	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/errors"
 	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/interfaces"
@@ -18,33 +17,32 @@ import (
 
 // ABFService is a model of high level representation of Antibruteforce service
 type ABFService struct {
-	ConstraintN     uint32 // Number of Login Attempts per minute
-	ConstraintM     uint32 // Number of Password Attempts per minute
-	ConstraintK     uint32 // Number of IP attempts per minute
-	BucketStorage   interfaces.BucketKeeper
-	IPFilterStorage interfaces.FilterKeeper
-	loginMap        *adapters.UUIDTable
-	passwdMap       *adapters.UUIDTable
-	ipMap           *adapters.UUIDTable
-	logger          *zap.Logger
-	config          *config.ServiceConfig
+	ConstraintN           uint32 // Number of Login Attempts per minute
+	ConstraintM           uint32 // Number of Password Attempts per minute
+	ConstraintK           uint32 // Number of IP attempts per minute
+	LoginBucketStorage    interfaces.BucketKeeper
+	PasswordBucketStorage interfaces.BucketKeeper
+	IPBucketStorage       interfaces.BucketKeeper
+	IPFilterStorage       interfaces.FilterKeeper
+	logger                *zap.Logger
+	config                *config.ServiceConfig
 }
 
 // NewABFService creates a new instance of Antibruteforce service
-func NewABFService(numberOfLogin, numberOfPassword, numberOfIP uint32, bucketStorage interfaces.BucketKeeper,
-	filterStorage interfaces.FilterKeeper, logger *zap.Logger, config *config.ServiceConfig) *ABFService {
+func NewABFService(numberOfLogin, numberOfPassword, numberOfIP uint32, loginStorage, passwordStorage,
+	ipStorage interfaces.BucketKeeper, filterStorage interfaces.FilterKeeper, logger *zap.Logger,
+	config *config.ServiceConfig) *ABFService {
 	abf := &ABFService{
-		ConstraintN:     numberOfLogin,
-		ConstraintM:     numberOfPassword,
-		ConstraintK:     numberOfIP,
-		BucketStorage:   bucketStorage,
-		IPFilterStorage: filterStorage,
-		logger:          logger,
-		config:          config,
+		ConstraintN:           numberOfLogin,
+		ConstraintM:           numberOfPassword,
+		ConstraintK:           numberOfIP,
+		LoginBucketStorage:    loginStorage,
+		PasswordBucketStorage: passwordStorage,
+		IPBucketStorage:       ipStorage,
+		IPFilterStorage:       filterStorage,
+		logger:                logger,
+		config:                config,
 	}
-	abf.loginMap = adapters.NewUUIDTable()
-	abf.passwdMap = adapters.NewUUIDTable()
-	abf.ipMap = adapters.NewUUIDTable()
 
 	return abf
 }
@@ -68,90 +66,87 @@ func validateAuthRequest(a entities.AuthenticationRequest) error {
 
 // CheckBucketLogin verify the Authentication Request againsts token buckets, create them if necessary
 func (a *ABFService) CheckBucketLogin(ctx context.Context, request string) (bool, error) {
-	loginID := a.loginMap.AddToTable(request)
-	_, err := a.BucketStorage.GetBucket(ctx, loginID)
+	_, err := a.LoginBucketStorage.GetBucket(ctx, request)
 
 	if err == errors.ErrTokenBucketNotFound {
-		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Minute/time.Duration(a.config.ConstraintN))
+		tb, err := tokenbucket.NewTokenBucket(1, time.Minute/time.Duration(a.config.ConstraintN), a.config.BucketIdleTimeOut)
 
 		if err != nil {
 			return false, err
 		}
 
-		err = a.BucketStorage.CreateBucket(ctx, loginID, tb)
+		err = a.LoginBucketStorage.CreateBucket(ctx, request, tb)
 
 		if err != nil {
 			return false, err
 		}
 	}
 
-	loginbucket, err := a.BucketStorage.GetBucket(ctx, loginID)
+	loginbucket, err := a.LoginBucketStorage.GetBucket(ctx, request)
 
 	if err != nil {
 		return false, err
 	}
 
-	isloginOK := loginbucket.Allow(ctx)
+	isloginOK := loginbucket.Allow()
 
 	return isloginOK, nil
 }
 
 // CheckBucketPassword verify the Authentication Request againsts token buckets, create them if necessary
 func (a *ABFService) CheckBucketPassword(ctx context.Context, request string) (bool, error) {
-	passwdID := a.passwdMap.AddToTable(request)
-	_, err := a.BucketStorage.GetBucket(ctx, passwdID)
+	_, err := a.PasswordBucketStorage.GetBucket(ctx, request)
 
 	if err == errors.ErrTokenBucketNotFound {
-		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Minute/time.Duration(a.config.ConstraintM))
+		tb, err := tokenbucket.NewTokenBucket(1, time.Minute/time.Duration(a.config.ConstraintM), a.config.BucketIdleTimeOut)
 
 		if err != nil {
 			return false, err
 		}
 
-		err = a.BucketStorage.CreateBucket(ctx, passwdID, tb)
+		err = a.PasswordBucketStorage.CreateBucket(ctx, request, tb)
 
 		if err != nil {
 			return false, err
 		}
 	}
 
-	passwdbucket, err := a.BucketStorage.GetBucket(ctx, passwdID)
+	passwdbucket, err := a.PasswordBucketStorage.GetBucket(ctx, request)
 
 	if err != nil {
 		return false, err
 	}
 
-	ispasswdOK := passwdbucket.Allow(ctx)
+	ispasswdOK := passwdbucket.Allow()
 
 	return ispasswdOK, nil
 }
 
 // CheckBucketIP verify the Authentication Request againsts token buckets, create them if necessary
 func (a *ABFService) CheckBucketIP(ctx context.Context, request string) (bool, error) {
-	ipID := a.ipMap.AddToTable(request)
-	_, err := a.BucketStorage.GetBucket(ctx, ipID)
+	_, err := a.IPBucketStorage.GetBucket(ctx, request)
 
 	if err == errors.ErrTokenBucketNotFound {
-		tb, err := tokenbucket.NewTokenBucket(ctx, 1, time.Minute/time.Duration(a.config.ConstraintK))
+		tb, err := tokenbucket.NewTokenBucket(1, time.Minute/time.Duration(a.config.ConstraintK), a.config.BucketIdleTimeOut)
 
 		if err != nil {
 			return false, err
 		}
 
-		err = a.BucketStorage.CreateBucket(ctx, ipID, tb)
+		err = a.IPBucketStorage.CreateBucket(ctx, request, tb)
 
 		if err != nil {
 			return false, err
 		}
 	}
 
-	ipbucket, err := a.BucketStorage.GetBucket(ctx, ipID)
+	ipbucket, err := a.IPBucketStorage.GetBucket(ctx, request)
 
 	if err != nil {
 		return false, err
 	}
 
-	isipOK := ipbucket.Allow(ctx)
+	isipOK := ipbucket.Allow()
 
 	return isipOK, nil
 }
@@ -237,23 +232,21 @@ func (a *ABFService) DeleteIPNetwork(ctx context.Context, net net.IPNet, color b
 
 // ResetLimits clear corresponding buckets for pair of login && ip
 func (a *ABFService) ResetLimits(ctx context.Context, request entities.AuthenticationRequest) error {
-	loginID := a.loginMap.AddToTable(request.Login)
-	ipID := a.ipMap.AddToTable(request.IPAddress)
-	loginbucket, err := a.BucketStorage.GetBucket(ctx, loginID)
+	loginbucket, err := a.LoginBucketStorage.GetBucket(ctx, request.Login)
 
 	if err != nil {
 		return err
 	}
 
-	loginbucket.Reset(ctx)
+	loginbucket.Reset()
 
-	ipbucket, err := a.BucketStorage.GetBucket(ctx, ipID)
+	ipbucket, err := a.IPBucketStorage.GetBucket(ctx, request.IPAddress)
 
 	if err != nil {
 		return err
 	}
 
-	ipbucket.Reset(ctx)
+	ipbucket.Reset()
 
 	return nil
 }

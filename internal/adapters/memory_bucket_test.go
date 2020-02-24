@@ -6,7 +6,6 @@ import (
 
 	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/errors"
 	"github.com/Lefthander/otus-go-antibruteforce/internal/mocks"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,13 +14,7 @@ func TestTockenBucketMemory(t *testing.T) {
 
 	ctx := context.Background()
 
-	teststruuid := "aaaaaaaa-1111-2222-3333-ffffffffffff"
-
-	testID, err := uuid.Parse(teststruuid)
-
-	if err != nil {
-		t.Error("Error create a test uuid", err)
-	}
+	testID := "aaaaaaaa-1111-2222-3333-ffffffffffff"
 
 	t.Run("Check empty", func(t *testing.T) {
 		assert.Equal(t, 0, len(tb.TokenBuckets))

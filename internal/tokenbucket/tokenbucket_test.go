@@ -1,7 +1,6 @@
 package tokenbucket
 
 import (
-	"context"
 	"testing"
 	"time"
 )
@@ -21,22 +20,19 @@ import (
 //    requests to the bucket.
 
 const (
-	WAITTIME3 = 3
-	WAITTIME1 = 1
-	WAITTIME5 = 5
-	WAITTIME0 = 0
+	WAITTIME3    = 3
+	WAITTIME1    = 1
+	WAITTIME5    = 5
+	WAITTIME0    = 0
+	LIFETIME5MIN = time.Duration(10 * time.Second)
 )
 
 func TestStillBucket(t *testing.T) {
-	capacity := 5
+	capacity := 1
 
 	fillRate := WAITTIME1 * time.Second
 
-	ctx, done := context.WithCancel(context.Background())
-
-	defer done()
-
-	tb, err := NewTokenBucket(ctx, uint32(capacity), fillRate)
+	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
 
 	if err != nil {
 		t.Error("Error", err)
@@ -48,19 +44,17 @@ func TestStillBucket(t *testing.T) {
 		t.Errorf("Bucket without requests must keep the currentAmoutn=%d equals to defined capacity=%d",
 			tb.Amount(), tb.Capacity())
 	}
+
 }
 
 // 2. Create a bucket and check that it's possible to get all capacity without any cancelation from the
 //    bucket in the burst
 func TestFullBucket(t *testing.T) {
 	var allow bool
-
 	capacity := 5
 	fillRate := WAITTIME1 * time.Second // Set a quite long period of refill
 
-	ctx, done := context.WithCancel(context.Background())
-
-	tb, err := NewTokenBucket(ctx, uint32(capacity), fillRate)
+	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
 
 	if err != nil {
 		t.Error("Error", err)
@@ -68,12 +62,11 @@ func TestFullBucket(t *testing.T) {
 
 	// Gets tokens one by one in number of capacity
 	for i := 0; i < capacity-1; i++ {
-		allow = tb.Allow(ctx)
+		allow = tb.Allow()
 		if !allow {
 			t.Error("Full TokenBucket must allow all requests regading its capacity")
 		}
 	}
-	done()
 }
 
 // 3. Create an empty bucket and check that all following requests will be disallowed.
@@ -82,11 +75,7 @@ func TestEmptyBucket(t *testing.T) {
 
 	fillRate := WAITTIME5 * time.Second
 
-	ctx, done := context.WithCancel(context.Background())
-
-	defer done()
-
-	tb, err := NewTokenBucket(ctx, uint32(capacity), fillRate)
+	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
 
 	if err != nil {
 		t.Error("Error", err)
@@ -94,12 +83,12 @@ func TestEmptyBucket(t *testing.T) {
 
 	// Make sure that bucket is empty
 	for i := 0; i < capacity-1; i++ {
-		tb.Allow(ctx)
+		tb.Allow()
 	}
 
 	// While bucket is empty the response must be false
 	for tb.Amount() == 0 {
-		if tb.Allow(ctx) {
+		if tb.Allow() {
 			t.Error("Bucket must not allow while it empty")
 			break
 		}
@@ -113,22 +102,18 @@ func TestResetBucket(t *testing.T) {
 
 	fillRate := WAITTIME1 * time.Second
 
-	ctx, done := context.WithCancel(context.Background())
-
-	defer done()
-
-	tb, err := NewTokenBucket(ctx, uint32(capacity), fillRate)
+	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
 
 	if err != nil {
 		t.Error("Error", err)
 	}
 
 	for i := 0; i < 50; i++ {
-		tb.Allow(ctx)
+		tb.Allow()
 	}
 
 	if tb.Amount() != tb.Capacity() {
-		tb.Reset(ctx)
+		tb.Reset()
 
 		if tb.Amount() != tb.Capacity() {
 			t.Errorf("The bucket must has the capacity=%d and amount=%d are equals after the reset!",
@@ -144,18 +129,14 @@ func TestZeroCapacityBucket(t *testing.T) {
 
 	fillRate := WAITTIME1 * time.Millisecond
 
-	ctx, done := context.WithCancel(context.Background())
-
-	defer done()
-
-	tb, err := NewTokenBucket(ctx, uint32(capacity), fillRate)
+	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
 
 	if err != nil {
 		t.Error("Error", err)
 	}
 
 	for i := 0; i < 50; i++ {
-		if tb.Allow(ctx) {
+		if tb.Allow() {
 			t.Error("Zero capacity bucket must allways response with false")
 		}
 	}
@@ -173,11 +154,7 @@ func TestZeroFillRateBucket(t *testing.T) {
 
 	fillRate := WAITTIME0 * time.Millisecond
 
-	ctx, done := context.WithCancel(context.Background())
-
-	defer done()
-
-	_, err := NewTokenBucket(ctx, uint32(capacity), fillRate)
+	_, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
 
 	if err == nil {
 		t.Error("Error cannot create a TimeTicker with rate ==0")
