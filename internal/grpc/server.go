@@ -35,6 +35,7 @@ func NewABFServer(abfs *usecases.ABFService) *ABFServer {
 func (a *ABFServer) ListenAndServe(listeningAddr string) error {
 	g := grpc.NewServer(grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor))
 
+	// Run wachdog goroutine to handle the system interrupts
 	go func() {
 		terminate := make(chan os.Signal, 1)
 		signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
