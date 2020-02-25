@@ -12,6 +12,9 @@ import (
 // ServiceConfig is a struct to store all configuration parameters of service
 type ServiceConfig struct {
 	LogMode           string
+	ServiceHost       string
+	ServicePort       string
+	MonitorPort       string
 	ConstraintN       uint32
 	ConstraintM       uint32
 	ConstraintK       uint32
