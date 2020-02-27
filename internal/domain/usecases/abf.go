@@ -24,13 +24,13 @@ type ABFService struct {
 	PasswordBucketStorage interfaces.BucketKeeper
 	IPBucketStorage       interfaces.BucketKeeper
 	IPFilterStorage       interfaces.FilterKeeper
-	logger                *zap.Logger
+	logger                *zap.SugaredLogger
 	config                *config.ServiceConfig
 }
 
 // NewABFService creates a new instance of Antibruteforce service
 func NewABFService(numberOfLogin, numberOfPassword, numberOfIP uint32, loginStorage, passwordStorage,
-	ipStorage interfaces.BucketKeeper, filterStorage interfaces.FilterKeeper, logger *zap.Logger,
+	ipStorage interfaces.BucketKeeper, filterStorage interfaces.FilterKeeper, logger *zap.SugaredLogger,
 	config *config.ServiceConfig) *ABFService {
 	abf := &ABFService{
 		ConstraintN:           numberOfLogin,
@@ -195,7 +195,7 @@ func (a *ABFService) IsAuthenticate(ctx context.Context, authRequest entities.Au
 
 // IsIPConform verifies does specified IP included in the filter table either black or white
 func (a *ABFService) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(a.config.TimeOut)*time.Microsecond)
+	ctx, cancel := context.WithTimeout(ctx, a.config.TimeOut)
 	defer cancel()
 
 	flag, err := a.IPFilterStorage.IsIPConform(ctx, ip)

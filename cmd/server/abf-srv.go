@@ -16,26 +16,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// RootCmd is a main command to run the service
 var RootCmd = &cobra.Command{
 	Use:   "abf-srv",
 	Short: "abf-srv to Run the ABF grpc server",
 	Run: func(cmd *cobra.Command, args []string) {
-		configLocation := flag.String("config", "config.json", "configuration file")
+		configLocation := flag.String("config", "config.yaml", "configuration file")
 		flag.Parse()
 
-		cfg, err := config.GetConfig(*configLocation)
+		err := config.GetConfig(*configLocation)
 
 		if err != nil {
 			log.Fatal("Error cannot get a config file ", err)
 		}
 
-		lg, err := logger.GetLogger(cfg)
+		lg, err := logger.GetLogger(config.GetLoggerCfg())
 
 		if err != nil {
 			log.Fatal("Error cannot setup a Zap logger", err)
 		}
 
-		psql, err := db.ConnectDB(cfg)
+		psql, err := db.ConnectDB(config.GetDBCfg())
 
 		if err != nil {
 			log.Fatal("Error to setup a Postgresql connection", err)
@@ -46,6 +47,8 @@ var RootCmd = &cobra.Command{
 		loginbucket := adapters.NewTokenBucketMemory()
 		passwdbucket := adapters.NewTokenBucketMemory()
 		ipbucket := adapters.NewTokenBucketMemory()
+
+		cfg := config.GetServiceCfg()
 
 		abfservice := usecases.NewABFService(cfg.ConstraintN, cfg.ConstraintM, cfg.ConstraintK, loginbucket, passwdbucket, ipbucket, ipstore, lg, cfg)
 
