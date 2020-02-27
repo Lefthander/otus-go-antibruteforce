@@ -3,6 +3,9 @@ package tokenbucket
 import (
 	"testing"
 	"time"
+
+	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 // Testcases:
@@ -20,11 +23,11 @@ import (
 //    requests to the bucket.
 
 const (
-	WAITTIME3    = 3
-	WAITTIME1    = 1
-	WAITTIME5    = 5
-	WAITTIME0    = 0
-	LIFETIME5MIN = 10 * time.Second
+	WAITTIME3  = 3
+	WAITTIME1  = 1
+	WAITTIME5  = 5
+	WAITTIME0  = 0
+	LIFETIME3S = 3 * time.Second
 )
 
 func TestStillBucket(t *testing.T) {
@@ -32,7 +35,7 @@ func TestStillBucket(t *testing.T) {
 
 	fillRate := WAITTIME1 * time.Second
 
-	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
+	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME3S)
 
 	if err != nil {
 		t.Error("Error", err)
@@ -54,7 +57,7 @@ func TestFullBucket(t *testing.T) {
 	capacity := 5
 	fillRate := WAITTIME1 * time.Second // Set a quite long period of refill
 
-	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
+	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME3S)
 
 	if err != nil {
 		t.Error("Error", err)
@@ -75,7 +78,7 @@ func TestEmptyBucket(t *testing.T) {
 
 	fillRate := WAITTIME5 * time.Second
 
-	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
+	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME3S)
 
 	if err != nil {
 		t.Error("Error", err)
@@ -102,7 +105,7 @@ func TestResetBucket(t *testing.T) {
 
 	fillRate := WAITTIME1 * time.Second
 
-	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
+	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME3S)
 
 	if err != nil {
 		t.Error("Error", err)
@@ -129,7 +132,7 @@ func TestZeroCapacityBucket(t *testing.T) {
 
 	fillRate := WAITTIME1 * time.Millisecond
 
-	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
+	tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME3S)
 
 	if err != nil {
 		t.Error("Error", err)
@@ -147,16 +150,25 @@ func TestZeroCapacityBucket(t *testing.T) {
 	}
 }
 
-// Test Bucket with Zero fillRate, bucket must response Allow = true for all request belongs
-// his capacity and after that respond Allow = false for forever
+// Test Bucket with Zero fillRate, bucket should return error.
 func TestZeroFillRateBucket(t *testing.T) {
-	capacity := 10
+	t.Run("Check bucket creation with fillrate=0", func(t *testing.T) {
+		capacity := 10
+		fillRate := WAITTIME0 * time.Millisecond
 
-	fillRate := WAITTIME0 * time.Millisecond
+		_, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME3S)
 
-	_, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME5MIN)
+		assert.Equal(t, errors.ErrTokenBucketInvalidFillRate, err)
+	})
+}
 
-	if err == nil {
-		t.Error("Error cannot create a TimeTicker with rate ==0")
-	}
+func TestBucketCloseInactive(t *testing.T) {
+	t.Run("Check that bucket will be closed correctly due to inactivity 3s", func(t *testing.T) {
+		capacity := 1
+		fillRate := WAITTIME1 * time.Second
+
+		tb, err := NewTokenBucket(uint32(capacity), fillRate, LIFETIME3S)
+		assert.Equal(t, nil, err)
+		assert.Equal(t, true, <-tb.GetShutDownChannel())
+	})
 }

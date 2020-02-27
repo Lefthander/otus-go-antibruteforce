@@ -1,7 +1,6 @@
 package tokenbucket
 
 import (
-	"log"
 	"sync"
 	"time"
 
@@ -58,7 +57,7 @@ func NewTokenBucket(capacity uint32, rate time.Duration, lifetime time.Duration)
 				tb.mx.RLock()
 				if time.Since(tb.lastAccessTime) > tb.lifeTime {
 					// Inactive timeout exeded - initiate the closure procedure of the bucket.
-					log.Println("Idle timeout exiting...")
+					// log.Println("Idle timeout exiting...")
 					tb.shutDown <- true
 					tb.mx.RUnlock()
 
