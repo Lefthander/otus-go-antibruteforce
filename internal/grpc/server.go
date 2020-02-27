@@ -25,10 +25,7 @@ type ABFServer struct {
 
 // NewABFServer creates a new instance of AntiBruteForce Service grpc server
 func NewABFServer(abfs *usecases.ABFService) *ABFServer {
-
-	return &ABFServer{
-		abfService: abfs,
-	}
+	return &ABFServer{abfService: abfs}
 }
 
 // ListenAndServe runs the GRPC Server
@@ -48,9 +45,11 @@ func (a *ABFServer) ListenAndServe(listeningAddr string) error {
 	if err != nil {
 		return err
 	}
+
 	api.RegisterABFServiceServer(g, a)
 	grpc_prometheus.EnableHandlingTimeHistogram()
 	grpc_prometheus.Register(g)
+
 	return g.Serve(l)
 }
 
@@ -64,11 +63,13 @@ func (a *ABFServer) Allow(ctx context.Context, req *api.AuthRequest) (*api.AuthR
 			},
 		}, errors.ErrAuthRequestIPMissed
 	}
+
 	isOk, err := a.abfService.IsAuthenticate(ctx, entities.AuthenticationRequest{
 		Login:     req.GetLogin(),
 		Password:  req.GetPassword(),
 		IPAddress: req.GetIpaddr(),
 	})
+
 	if err != nil {
 		log.Println("Errors during IsAUthnenticate", err)
 		return &api.AuthResponse{
@@ -77,6 +78,7 @@ func (a *ABFServer) Allow(ctx context.Context, req *api.AuthRequest) (*api.AuthR
 			},
 		}, err
 	}
+
 	return &api.AuthResponse{
 		Response: &api.AuthResponse_Ok{Ok: isOk},
 	}, nil
@@ -93,6 +95,7 @@ func (a *ABFServer) Reset(ctx context.Context, req *api.AuthRequest) (*api.AuthR
 			},
 		}, errors.ErrAuthRequestIPMissed
 	}
+
 	err := a.abfService.ResetLimits(ctx, entities.AuthenticationRequest{
 		Login:     req.GetLogin(),
 		Password:  "",

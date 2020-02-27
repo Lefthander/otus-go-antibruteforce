@@ -25,9 +25,7 @@ func GetLogger(cfg *config.LoggerConfig) (*zap.SugaredLogger, error) {
 		}
 	default:
 		l = zap.NewExample()
-
 	}
-
 	l.Sync()
 
 	return l.Sugar(), nil

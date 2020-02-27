@@ -50,7 +50,8 @@ var RootCmd = &cobra.Command{
 
 		cfg := config.GetServiceCfg()
 
-		abfservice := usecases.NewABFService(cfg.ConstraintN, cfg.ConstraintM, cfg.ConstraintK, loginbucket, passwdbucket, ipbucket, ipstore, lg, cfg)
+		abfservice := usecases.NewABFService(cfg.ConstraintN, cfg.ConstraintM,
+			cfg.ConstraintK, loginbucket, passwdbucket, ipbucket, ipstore, lg, cfg)
 
 		abfserver := grpc.NewABFServer(abfservice)
 

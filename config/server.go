@@ -52,5 +52,6 @@ func GetServiceCfg() *ServiceConfig {
 	viper.SetDefault("abf-srv-bucket-idle-timeout", DefaultBucketIdleTimeOut)
 	viper.SetDefault("abf-srv-bucket-capacity", 1)
 	viper.SetDefault("abf-srv-default-timeout", DefaultTimeOut)
+
 	return newServiceCfg()
 }

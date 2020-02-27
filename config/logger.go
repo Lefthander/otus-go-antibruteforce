@@ -22,5 +22,6 @@ func GetLoggerCfg() *LoggerConfig {
 	viper.SetDefault("bf-srv-logger-verbose", false)
 	viper.SetDefault("abf-srv-logger-debug", false)
 	viper.SetDefault("abf-srv-env", "dev")
+
 	return newLoggerCfg()
 }

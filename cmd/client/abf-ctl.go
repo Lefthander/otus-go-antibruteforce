@@ -15,16 +15,16 @@ import (
 )
 
 var (
-	client api.ABFServiceClient
+	client api.ABFServiceClient //nolint
 
-	clientcfg *config.ClientConfig
+	clientcfg *config.ClientConfig // nolint
 )
 
 // RootCmd is a main command to handle the client commands
-var RootCmd = &cobra.Command{
-	Use:       "abf-ctl [add-to-iplist,delete-from-iplist,reset-limits,show-iplist",
+var RootCmd = &cobra.Command{ // nolint
+	Use:       "abf-ctl [add-to-iplist,delete-from-iplist,reset-limits,show-iplist,test",
 	Short:     "abf-ctl gRPC client for AntiBruteForce Service",
-	ValidArgs: []string{"add-to-iplist", "delete-from-iplist", "reset-limits", "show-iplist"},
+	ValidArgs: []string{"add-to-iplist", "delete-from-iplist", "reset-limits", "show-iplist", "test"},
 	Args:      cobra.ExactValidArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		clientcfg = config.GetClientCfg()
@@ -49,6 +49,8 @@ var RootCmd = &cobra.Command{
 			resetLimits(ctx)
 		case "show-iplist":
 			showIPList(ctx)
+		case "test":
+			isConform(ctx)
 		}
 
 	},
