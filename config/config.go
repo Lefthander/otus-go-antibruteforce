@@ -14,7 +14,6 @@ func GetConfig(cfgname string) error {
 	viper.AddConfigPath(cfgname)
 
 	if err := viper.ReadInConfig(); err != nil {
-
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			log.Println("Warning: Config file not found. Using defaults...", err)
 		} else {

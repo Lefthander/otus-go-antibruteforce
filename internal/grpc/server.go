@@ -56,8 +56,8 @@ func (a *ABFServer) ListenAndServe(listeningAddr string) error {
 // Allow check authorization of triplet (login,password,ip)
 func (a *ABFServer) Allow(ctx context.Context, req *api.AuthRequest) (*api.AuthResponse, error) {
 	ipaddress := net.ParseIP(req.GetIpaddr())
-	if ipaddress == nil {
 
+	if ipaddress == nil {
 		return &api.AuthResponse{
 			Response: &api.AuthResponse_Error{
 				Error: errors.ErrAuthRequestIPMissed.Error(),
@@ -106,6 +106,7 @@ func (a *ABFServer) Reset(ctx context.Context, req *api.AuthRequest) (*api.AuthR
 
 	if err != nil {
 		log.Println("Error at bucket reset limits", err)
+
 		return &api.AuthResponse{
 			Response: &api.AuthResponse_Error{
 				Error: status.Error(codes.Internal, err.Error()).Error(),

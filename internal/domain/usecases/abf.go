@@ -261,5 +261,6 @@ func (a *ABFService) ListIPNetworks(ctx context.Context, color bool) ([]string, 
 	if err != nil {
 		return nil, err
 	}
+
 	return ipnets, nil
 }

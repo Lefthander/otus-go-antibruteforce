@@ -56,7 +56,6 @@ var RootCmd = &cobra.Command{ // nolint
 		case "test":
 			isConform(ctx)
 		}
-
 	},
 }
 
@@ -67,7 +66,6 @@ func newClient(ctx context.Context, host, port string) api.ABFServiceClient {
 	}
 
 	return api.NewABFServiceClient(conn)
-
 }
 
 func main() {
