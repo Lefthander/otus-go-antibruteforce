@@ -11,7 +11,7 @@ const (
 	DefaultClientTimeOut = 30 * time.Second
 )
 
-// ClientConfig contains paramters related to the client
+// ClientConfig contains parameters related to the client
 type ClientConfig struct {
 	Host              string
 	Port              string

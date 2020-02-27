@@ -37,5 +37,5 @@ var (
 	// ErrNoMappingFound appears when there is no match in UUIDTable found
 	ErrNoMappingFound = errors.New("no matching found between value and UUID")
 	// ErrNoGrpcError appears when we need to send nil over strign in grpc
-	ErrNoGrpcError = errors.New("Everything is ok")
+	ErrNoGrpcError = errors.New("everything is ok")
 )

@@ -14,6 +14,10 @@ import (
 	"google.golang.org/grpc"
 )
 
+const (
+	numberOfValidArgs = 1
+)
+
 var (
 	client api.ABFServiceClient //nolint
 
@@ -25,7 +29,7 @@ var RootCmd = &cobra.Command{ // nolint
 	Use:       "abf-ctl [add-to-iplist,delete-from-iplist,reset-limits,show-iplist,test",
 	Short:     "abf-ctl gRPC client for AntiBruteForce Service",
 	ValidArgs: []string{"add-to-iplist", "delete-from-iplist", "reset-limits", "show-iplist", "test"},
-	Args:      cobra.ExactValidArgs(1),
+	Args:      cobra.ExactValidArgs(numberOfValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
 		clientcfg = config.GetClientCfg()
 		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)

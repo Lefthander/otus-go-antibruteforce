@@ -16,7 +16,7 @@ const (
 )
 
 // ServiceConfig contains the parameters related to ABF Service
-type ServiceConfig struct {
+type ServiceConfig struct { // nolint
 	ServiceHost       string
 	ServicePort       string
 	MonitorPort       string

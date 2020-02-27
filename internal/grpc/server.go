@@ -57,6 +57,7 @@ func (a *ABFServer) ListenAndServe(listeningAddr string) error {
 func (a *ABFServer) Allow(ctx context.Context, req *api.AuthRequest) (*api.AuthResponse, error) {
 	ipaddress := net.ParseIP(req.GetIpaddr())
 	if ipaddress == nil {
+
 		return &api.AuthResponse{
 			Response: &api.AuthResponse_Error{
 				Error: errors.ErrAuthRequestIPMissed.Error(),
@@ -72,6 +73,7 @@ func (a *ABFServer) Allow(ctx context.Context, req *api.AuthRequest) (*api.AuthR
 
 	if err != nil {
 		log.Println("Errors during IsAUthnenticate", err)
+
 		return &api.AuthResponse{
 			Response: &api.AuthResponse_Error{
 				Error: status.Error(codes.Internal, err.Error()).Error(),
@@ -117,7 +119,7 @@ func (a *ABFServer) Reset(ctx context.Context, req *api.AuthRequest) (*api.AuthR
 }
 
 // AddToIpFilter adds a network to B/W IP Table
-func (a *ABFServer) AddToIpFilter(ctx context.Context, req *api.IPFilterData) (*api.IPFilterResponse, error) {
+func (a *ABFServer) AddToIpFilter(ctx context.Context, req *api.IPFilterData) (*api.IPFilterResponse, error) { // nolint
 	_, cidr, err := net.ParseCIDR(req.GetNetwork())
 	if err != nil {
 		return &api.IPFilterResponse{
@@ -139,7 +141,7 @@ func (a *ABFServer) AddToIpFilter(ctx context.Context, req *api.IPFilterData) (*
 }
 
 // DeleteFromIpFilter deletes the network from B/W table
-func (a *ABFServer) DeleteFromIpFilter(ctx context.Context, req *api.IPFilterData) (*api.IPFilterResponse, error) {
+func (a *ABFServer) DeleteFromIpFilter(ctx context.Context, req *api.IPFilterData) (*api.IPFilterResponse, error) { // nolint
 	_, cidr, err := net.ParseCIDR(req.GetNetwork())
 	if err != nil {
 		return &api.IPFilterResponse{
@@ -161,7 +163,7 @@ func (a *ABFServer) DeleteFromIpFilter(ctx context.Context, req *api.IPFilterDat
 }
 
 // GetIpFilters dump all content of specific table Black or White)
-func (a *ABFServer) GetIpFilters(ctx context.Context, req *api.IPFilterData) (*api.IPFiltersData, error) {
+func (a *ABFServer) GetIpFilters(ctx context.Context, req *api.IPFilterData) (*api.IPFiltersData, error) { // nolint
 	ipnets, err := a.abfService.ListIPNetworks(ctx, req.GetColor())
 
 	if err != nil {

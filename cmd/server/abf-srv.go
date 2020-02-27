@@ -17,7 +17,7 @@ import (
 )
 
 // RootCmd is a main command to run the service
-var RootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{ //nolint
 	Use:   "abf-srv",
 	Short: "abf-srv to Run the ABF grpc server",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -73,7 +73,7 @@ var RootCmd = &cobra.Command{
 	},
 }
 
-func init() {
+func init() { // nolint
 
 }
 
