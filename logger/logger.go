@@ -6,16 +6,13 @@ import (
 )
 
 // GetLogger returns a zap logger in accordance with configuration settings
-func GetLogger(cfg *config.ServiceConfig) (*zap.Logger, error) {
+func GetLogger(cfg *config.LoggerConfig) (*zap.SugaredLogger, error) {
 	var (
 		l   *zap.Logger
 		err error
 	)
 
-	switch cfg.LogMode {
-	case "debug":
-		l = zap.NewNop()
-		return l, nil
+	switch cfg.Environment {
 	case "prod":
 		l, err = zap.NewProduction()
 		if err != nil {
@@ -28,6 +25,10 @@ func GetLogger(cfg *config.ServiceConfig) (*zap.Logger, error) {
 		}
 	default:
 		l = zap.NewExample()
+
 	}
-	return l, nil
+
+	l.Sync()
+
+	return l.Sugar(), nil
 }
