@@ -25,8 +25,8 @@ func newDBCfg() *DBConfig {
 func GetDBCfg() *DBConfig {
 	viper.SetDefault("abf-db-host", "localhost")
 	viper.SetDefault("abf-db-port", "5432")
-	viper.SetDefault("abf-db-username", "postgres")
-	viper.SetDefault("abf-db-password", "")
+	viper.SetDefault("abf-db-username", "abfuser")
+	viper.SetDefault("abf-db-password", "abfpassword")
 	viper.SetDefault("abf-db-dbname", "postgres")
 
 	return newDBCfg()
