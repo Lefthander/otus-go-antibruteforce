@@ -12,8 +12,8 @@ abf-srv-default-timeout: 30s
 
 # ABF-SRV Logger configuration parameters
 
-abf-srv-logger-verbose: false
-abf-srv-logger-debug: false
+abf-srv-logger-verbose: true
+abf-srv-logger-debug: true
 abf-srv-env: dev
 
 # Postgres DB Configuration parameters
