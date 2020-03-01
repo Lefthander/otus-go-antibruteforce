@@ -2,16 +2,20 @@ package config
 
 import (
 	"log"
-	"path/filepath"
-	"strings"
 
 	"github.com/spf13/viper"
 )
 
 // GetConfig reads configuration from the provided file
-func GetConfig(cfgname string) error {
-	viper.SetConfigName(strings.Split(filepath.Base(cfgname), ".")[0])
-	viper.AddConfigPath(cfgname)
+func GetConfig() error {
+	if viper.GetString("config") != "" {
+		viper.SetConfigFile(viper.GetString("config"))
+	} else {
+		viper.AddConfigPath(".")
+		viper.SetConfigName("abf")
+	}
+
+	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
