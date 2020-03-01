@@ -7,6 +7,6 @@ test:
 	go test -v -cover ./...
 	go test -v -race ./...
 build-server:
-	go build -o abf-srv github.com/Lefthander/otus-go-antibruteforce/cmd/server
+	go build -o ./bin/abf-srv github.com/Lefthander/otus-go-antibruteforce/cmd/server
 build-client:
-	go build -o abf-ctl github.com/Lefthander/otus-go-antibruteforce/cmd/client
+	go build -o ./bin/abf-ctl github.com/Lefthander/otus-go-antibruteforce/cmd/client

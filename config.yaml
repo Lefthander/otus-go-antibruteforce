@@ -1,0 +1,29 @@
+# Anti Brute Force configuration file
+
+# ABF-SRV Server configuration parameters
+abf-srv-host: localhost
+abf-srv-port: 8999
+abf-srv-login-limit: 10
+abf-srv-password-limit: 100
+abf-srv-ipaddress-limit: 1000
+abf-srv-bucket-idle-timeout: 1m
+abf-srv-bucket-capacity: 1
+abf-srv-default-timeout: 30s
+
+# ABF-SRV Logger configuration parameters
+
+abf-srv-logger-verbose: false
+abf-srv-logger-debug: false
+abf-srv-env: dev
+
+# Postgres DB Configuration parameters
+abf-db-host: localhost
+abf-db-port: 5432
+abf-db-username: abfuser
+abf-db-password: abfpassword
+abf-db-dbname: postgres
+
+# ABF-CTL Configuration part
+abf-ctl-host: localhost
+abf-ctl-port: 9000
+abf-ctl-timeout: 30s

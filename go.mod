@@ -7,6 +7,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/jmoiron/sqlx v1.2.0
+	github.com/lib/pq v1.0.0
 	github.com/prometheus/client_golang v1.4.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/cobra v0.0.6
