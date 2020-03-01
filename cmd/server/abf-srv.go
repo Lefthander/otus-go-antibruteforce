@@ -30,7 +30,13 @@ var RootCmd = &cobra.Command{ //nolint
 			log.Fatal("Error cannot get a config file ", err)
 		}
 
-		lg, err := logger.GetLogger(config.GetLoggerCfg())
+		loggercfg := config.GetLoggerCfg()
+
+		if loggercfg == nil {
+			log.Fatal("Failed to get logger config")
+		}
+
+		lg, err := logger.GetLogger(loggercfg)
 
 		if err != nil {
 			log.Fatal("Error cannot setup a Zap logger", err)
@@ -39,16 +45,28 @@ var RootCmd = &cobra.Command{ //nolint
 		psql, err := db.ConnectDB(config.GetDBCfg())
 
 		if err != nil {
-			log.Fatal("Error to setup a Postgresql connection", err)
+			lg.Fatal("Error to setup a Postgresql connection", err)
+		}
+
+		if loggercfg.Verbose {
+			lg.Info("Setting UP the B/W IP List store...")
 		}
 
 		ipstore := ipdbs.NewDBStore(psql)
+
+		if loggercfg.Verbose {
+			lg.Info("Setting UP the Login/Password/IP Token Buckets...")
+		}
 
 		loginbucket := adapters.NewTokenBucketMemory()
 		passwdbucket := adapters.NewTokenBucketMemory()
 		ipbucket := adapters.NewTokenBucketMemory()
 
 		cfg := config.GetServiceCfg()
+
+		if loggercfg.Verbose {
+			lg.Info("Setting UP the ABF Service...")
+		}
 
 		abfservice := usecases.NewABFService(cfg.ConstraintN, cfg.ConstraintM,
 			cfg.ConstraintK, loginbucket, passwdbucket, ipbucket, ipstore, lg, cfg)
@@ -59,16 +77,19 @@ var RootCmd = &cobra.Command{ //nolint
 			Port: cfg.MonitorPort,
 		}
 
-		log.Println("Starting Prometheus metric handler...")
+		if loggercfg.Verbose {
+			lg.Info("Starting Prometheus metric handler...")
+		}
 
 		metr.ServeMetrics()
 
-		log.Println("Starting AntiBruteForceService...")
-
+		if loggercfg.Verbose {
+			lg.Info("Starting AntiBruteForceService...")
+		}
 		err = abfserver.ListenAndServe(net.JoinHostPort(cfg.ServiceHost, cfg.ServicePort))
 
 		if err != nil {
-			log.Fatal("Error cannot start AntiBruteForce Server", err)
+			lg.Fatal("Error cannot start AntiBruteForce Server", err)
 		}
 	},
 }

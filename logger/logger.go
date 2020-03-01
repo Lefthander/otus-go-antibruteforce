@@ -27,7 +27,7 @@ func GetLogger(cfg *config.LoggerConfig) (*zap.SugaredLogger, error) {
 		l = zap.NewExample()
 	}
 
-	err = l.Sync()
+	// err = l.Sync() I'm not sure that it's needed.
 
 	if err != nil {
 		return nil, err

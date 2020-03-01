@@ -19,7 +19,7 @@ func newLoggerCfg() *LoggerConfig {
 
 // GetLoggerCfg returns the LoggerConfig within pre-defined settings in case of missing some...
 func GetLoggerCfg() *LoggerConfig {
-	viper.SetDefault("bf-srv-logger-verbose", false)
+	viper.SetDefault("abf-srv-logger-verbose", false)
 	viper.SetDefault("abf-srv-logger-debug", false)
 	viper.SetDefault("abf-srv-env", "dev")
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/Lefthander/otus-go-antibruteforce/config"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq" // The postgres driver for sqlx
 )
 
 // ConnectDB returns a connection pull to postgres
