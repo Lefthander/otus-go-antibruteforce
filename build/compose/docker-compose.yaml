@@ -1,0 +1,31 @@
+version: 3.7
+
+services:
+  abf:
+    build:
+      context: ../..
+      dockerfile: build/docker/Dockerfile
+      ports: 
+        - 8999:8999
+      volumes: 
+        - ../../config.yaml:/etc/abf/config.yaml
+      networks:
+        - net_db
+      depends_on:
+        - psql
+      restart: on-failure
+  psql: 
+    image: "postgres:11-alpine"
+    environment: 
+      - POSTGRES_USER=abfuser
+      - POSTGRES_PASSWORD=abfpassword
+      - POSTGRES_DB=postgres
+    ports: 
+      - 5432:5432
+    volumes: 
+      - ../../db/migrations/initial.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - net_db
+networks:
+  net_db:
+        driver: bridge
