@@ -24,6 +24,6 @@ abf-db-password: abfpassword
 abf-db-dbname: postgres
 
 # ABF-CTL Configuration part
-abf-ctl-host: host.docker.internal
+abf-ctl-host: localhost
 abf-ctl-port: 8999
-abf-ctl-timeout: 30s
+abf-ctl-timeout: 5m

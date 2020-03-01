@@ -8,7 +8,7 @@ import (
 
 const (
 	// DefaultClientTimeOut is timeout for connection to the abf-srv
-	DefaultClientTimeOut = 30 * time.Second
+	DefaultClientTimeOut = 5 * time.Minute
 )
 
 // ClientConfig contains parameters related to the client
@@ -29,7 +29,7 @@ func newClientCfg() *ClientConfig {
 // GetClientCfg returns a configuration parameters related to the client
 func GetClientCfg() *ClientConfig {
 	viper.SetDefault("abf-ctl-host", "localhost")
-	viper.SetDefault("abf-ctl-port", "9000")
+	viper.SetDefault("abf-ctl-port", "8999")
 	viper.SetDefault("abf-ctl-timeout", DefaultClientTimeOut)
 
 	return newClientCfg()

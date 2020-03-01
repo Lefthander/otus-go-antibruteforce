@@ -84,7 +84,7 @@ var RootCmd = &cobra.Command{ //nolint
 		metr.ServeMetrics()
 
 		if loggercfg.Verbose {
-			lg.Info("Starting AntiBruteForceService...")
+			lg.Infof("Starting AntiBruteForceService on Port=%s...", cfg.ServicePort)
 		}
 		err = abfserver.ListenAndServe(net.JoinHostPort(cfg.ServiceHost, cfg.ServicePort))
 

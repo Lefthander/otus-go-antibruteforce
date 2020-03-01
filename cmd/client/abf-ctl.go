@@ -19,9 +19,9 @@ const (
 )
 
 var (
-	client api.ABFServiceClient //nolint
+	//	client api.ABFServiceClient //nolint
 
-	clientcfg *config.ClientConfig // nolint
+	//	clientcfg *config.ClientConfig // nolint
 
 	logcfg *config.LoggerConfig // nolint
 
@@ -32,7 +32,7 @@ var (
 
 	ipaddress string //nolint
 
-	ctx context.Context // nolint
+	//ctx context.Context // nolint
 )
 
 // RootCmd is a main command to handle the client commands
@@ -42,18 +42,19 @@ var RootCmd = &cobra.Command{ // nolint
 	ValidArgs: []string{"add", "del", "reset", "show", "test"},
 	Args:      cobra.ExactValidArgs(numberOfValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
-		clientcfg = config.GetClientCfg()
-		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
-		client = newClient(ctx, clientcfg.Host, clientcfg.Port)
+		//	clientcfg: = config.GetClientCfg()
+		//	ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
+		//	client = newClient(ctx, clientcfg.Host, clientcfg.Port)
 
 		// Running watchdog goroutine to control the system interrupts
-		go func() {
-			terminate := make(chan os.Signal, 1)
-			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
-			<-terminate
-			log.Println("Received system interrupt...")
-			cancel()
-		}()
+		/* 		go func() {
+		   			terminate := make(chan os.Signal, 1)
+		   			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
+		   			<-terminate
+		   			log.Println("Received system interrupt...")
+		   			cancel()
+		   		}()
+		*/
 	},
 }
 
@@ -61,6 +62,18 @@ var addCmd = &cobra.Command{ //nolint
 	Use:   "add",
 	Short: "add to black/white list",
 	Run: func(cmd *cobra.Command, args []string) {
+		clientcfg := config.GetClientCfg()
+		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
+		defer cancel()
+		client := newClient(ctx, clientcfg.Host, clientcfg.Port)
+		go func() {
+			terminate := make(chan os.Signal, 1)
+			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
+			<-terminate
+			log.Println("Received system interrupt...")
+			cancel()
+		}()
+
 		r, err := client.AddToIpFilter(ctx, &api.IPFilterData{Network: network, Color: color})
 		if err != nil {
 			log.Fatalf("unable to add to list: %v", err)
@@ -73,6 +86,17 @@ var delCmd = &cobra.Command{ //nolint
 	Use:   "del",
 	Short: "del from black/white list",
 	Run: func(cmd *cobra.Command, args []string) {
+		clientcfg := config.GetClientCfg()
+		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
+		defer cancel()
+		client := newClient(ctx, clientcfg.Host, clientcfg.Port)
+		go func() {
+			terminate := make(chan os.Signal, 1)
+			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
+			<-terminate
+			log.Println("Received system interrupt...")
+			cancel()
+		}()
 		r, err := client.DeleteFromIpFilter(ctx, &api.IPFilterData{Network: network, Color: color})
 		if err != nil {
 			log.Fatalf("unable to add to list: %v", err)
@@ -85,6 +109,18 @@ var resetCmd = &cobra.Command{ //nolint
 	Short: "reset",
 	Long:  "reset the bucket limits for specifi pair of Login/IP",
 	Run: func(cmd *cobra.Command, args []string) {
+		clientcfg := config.GetClientCfg()
+		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
+		defer cancel()
+		client := newClient(ctx, clientcfg.Host, clientcfg.Port)
+		go func() {
+			terminate := make(chan os.Signal, 1)
+			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
+			<-terminate
+			log.Println("Received system interrupt...")
+			cancel()
+		}()
+
 		r, err := client.Reset(ctx, &api.AuthRequest{Login: login, Password: "", Ipaddr: ipaddress})
 		if err != nil {
 			log.Fatalf("unable to reset limits: %v", err)
@@ -97,6 +133,18 @@ var showCmd = &cobra.Command{ //nolint
 	Short: "show",
 	Long:  "show dumps the corresponding ip table black/white",
 	Run: func(cmd *cobra.Command, args []string) {
+		clientcfg := config.GetClientCfg()
+		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
+		defer cancel()
+		client := newClient(ctx, clientcfg.Host, clientcfg.Port)
+		go func() {
+			terminate := make(chan os.Signal, 1)
+			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
+			<-terminate
+			log.Println("Received system interrupt...")
+			cancel()
+		}()
+
 		r, err := client.GetIpFilters(ctx, &api.IPFilterData{Network: "", Color: color})
 		if err != nil {
 			log.Fatalf("unable to reset limits: %v", err)
@@ -130,6 +178,7 @@ func init() { // nolint
 
 func main() {
 	log.Println("ABF Client started..")
+	config.GetConfig("config.yml")
 
 	if err := RootCmd.Execute(); err != nil {
 		log.Fatal(err)
