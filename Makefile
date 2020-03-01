@@ -10,3 +10,13 @@ build-server:
 	go build -o ./bin/abf-srv github.com/Lefthander/otus-go-antibruteforce/cmd/server
 build-client:
 	go build -o ./bin/abf-ctl github.com/Lefthander/otus-go-antibruteforce/cmd/client
+
+undeploy:
+	docker-compose -f build/compose/docker-compose.yml down
+
+deploy:
+	docker-compose -f build/compose/docker-compose.yml up -d --build
+
+status:
+	docker-compose -f build/compose/docker-compose.yml ps
+
