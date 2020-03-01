@@ -7,15 +7,16 @@ RUN go mod download
 
 FROM build-env AS build
 ENV NAME "abf"
-WORKDIR /opt/${NAME}
+WORKDIR /${NAME}
 COPY . .
-RUN CGO_ENABLED=0 go build -o bin/${NAME}-srv
+RUN CGO_ENABLED=0 go build -o bin/${NAME}-srv ./cmd/server
 
 FROM alpine
 ENV NAME "abf"
 WORKDIR /${NAME}
-COPY --from=build ${NAME}/bin/${NAME} ./${NAME}
+COPY --from=build ${NAME}/bin/${NAME}-srv ./${NAME}
 RUN apk add --no-cache tzdata
 ENV TZ=Europe/Moscow
 EXPOSE 8999
 CMD ./${NAME} abf-srv
+

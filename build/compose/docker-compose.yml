@@ -5,12 +5,12 @@ services:
     container_name: abf-service
     build:
       context: ../..
-      dockerfile: ../../build/docker/Dockerfile
+      dockerfile: build/docker/Dockerfile
     ports: 
       - 8999:8999
       - 9001:9001
     volumes: 
-      - ../../config.yaml:/etc/abf/config.yaml
+      - ../../config.yaml:/abf/config.yaml
     networks:
         - net_db
     depends_on:
@@ -25,7 +25,7 @@ services:
     ports: 
       - 5432:5432
     volumes: 
-      - ../../db/migrations/initial.sql:/docker-entrypoint-initdb.d/init.sql
+      - ../../db/migrations/:/docker-entrypoint-initdb.d/
     networks:
       - net_db
 networks:
