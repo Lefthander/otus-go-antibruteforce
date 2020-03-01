@@ -74,7 +74,6 @@ var RootCmd = &cobra.Command{ //nolint
 }
 
 func init() { // nolint
-	cobra.OnInitialize(config.GetConfig())
 }
 
 func main() {
