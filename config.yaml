@@ -17,7 +17,7 @@ abf-srv-logger-debug: true
 abf-srv-env: dev
 
 # Postgres DB Configuration parameters
-abf-db-host: localhost
+abf-db-host: host.docker.internal
 abf-db-port: 5432
 abf-db-username: abfuser
 abf-db-password: abfpassword
