@@ -10,7 +10,6 @@ import (
 
 // GetConfig reads configuration from the provided file
 func GetConfig(cfg string) error {
-
 	viper.SetConfigName(filepath.Base(strings.Split(filepath.Base(cfg), ".")[0]))
 	viper.AddConfigPath(filepath.Dir(cfg))
 	viper.AutomaticEnv()
