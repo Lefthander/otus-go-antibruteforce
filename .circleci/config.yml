@@ -32,3 +32,7 @@ jobs:
           command: |
             curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.23.6
             golangci-lint run --enable-all
+      - run:
+          name: "build server"
+          command:
+            make build-server
