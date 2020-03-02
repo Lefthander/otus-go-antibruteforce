@@ -3,6 +3,7 @@ module github.com/Lefthander/otus-go-antibruteforce
 go 1.13
 
 require (
+	github.com/cucumber/godog v0.8.1 // indirect
 	github.com/golang/protobuf v1.3.2
 	github.com/google/uuid v1.1.1
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
