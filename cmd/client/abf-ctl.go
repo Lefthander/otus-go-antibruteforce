@@ -178,7 +178,10 @@ func init() { // nolint
 
 func main() {
 	log.Println("ABF Client started..")
-	config.GetConfig("config.yml")
+	err := config.GetConfig("config.yml")
+	if err != nil {
+		log.Fatal("Error setting up the configuration ", err)
+	}
 
 	if err := RootCmd.Execute(); err != nil {
 		log.Fatal(err)
