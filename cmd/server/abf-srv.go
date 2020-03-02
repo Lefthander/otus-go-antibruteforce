@@ -9,6 +9,7 @@ import (
 	"github.com/Lefthander/otus-go-antibruteforce/db"
 	"github.com/Lefthander/otus-go-antibruteforce/internal/adapters"
 	ipdbs "github.com/Lefthander/otus-go-antibruteforce/internal/adapters/db"
+	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/interfaces"
 	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/usecases"
 	"github.com/Lefthander/otus-go-antibruteforce/internal/grpc"
 	"github.com/Lefthander/otus-go-antibruteforce/internal/metrics"
@@ -21,6 +22,7 @@ var RootCmd = &cobra.Command{ //nolint
 	Use:   "abf-srv",
 	Short: "abf-srv to Run the ABF grpc server",
 	Run: func(cmd *cobra.Command, args []string) {
+		var store interfaces.FilterKeeper
 		configLocation := flag.String("config", "config.yaml", "configuration file")
 		flag.Parse()
 
@@ -42,17 +44,30 @@ var RootCmd = &cobra.Command{ //nolint
 			log.Fatal("Error cannot setup a Zap logger", err)
 		}
 
-		psql, err := db.ConnectDB(config.GetDBCfg())
-
-		if err != nil {
-			lg.Fatal("Error to setup a Postgresql connection", err)
-		}
+		dbcfg := config.GetDBCfg()
 
 		if loggercfg.Verbose {
 			lg.Info("Setting UP the B/W IP List store...")
 		}
 
-		ipstore := ipdbs.NewDBStore(psql)
+		switch dbcfg.DBType {
+		case "memory":
+			lg.Info("Selected Memory Map as storage for IP Filters")
+			store = adapters.NewIPFilterMemory()
+		case "psql":
+			lg.Info("Selected Postgresql DB as storage for IP Filters")
+
+			psql, err := db.ConnectDB(dbcfg)
+
+			if err != nil {
+				lg.Fatal("Error to setup a Postgresql connection", err)
+			}
+			store = ipdbs.NewDBStore(psql)
+
+		default:
+			lg.Info("Selected Memory Map as storage for IP Filters")
+			store = adapters.NewIPFilterMemory()
+		}
 
 		if loggercfg.Verbose {
 			lg.Info("Setting UP the Login/Password/IP Token Buckets...")
@@ -69,7 +84,7 @@ var RootCmd = &cobra.Command{ //nolint
 		}
 
 		abfservice := usecases.NewABFService(cfg.ConstraintN, cfg.ConstraintM,
-			cfg.ConstraintK, loginbucket, passwdbucket, ipbucket, ipstore, lg, cfg)
+			cfg.ConstraintK, loginbucket, passwdbucket, ipbucket, store, lg, cfg)
 
 		abfserver := grpc.NewABFServer(abfservice)
 
