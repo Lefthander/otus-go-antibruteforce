@@ -36,3 +36,7 @@ jobs:
           name: "build server"
           command:
             make build-server
+      - run:
+          name: "build-client"
+          command:
+            make build-client
