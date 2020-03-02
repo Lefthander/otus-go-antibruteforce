@@ -81,6 +81,8 @@ func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 
 	bnets := make([]string, 0)
 
+	//select * from ip_white_list where cidr '10.10.0.0/32' << network(network);
+
 	requestBlack := `SELECT * FROM ip_black_list WHERE ipaddr=$1 << ANY (network)`
 
 	err = d.DB.SelectContext(ctx, &bnets, requestBlack)
@@ -98,7 +100,11 @@ func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 
 // ListIPNetworks in specified by color (B/W) table
 func (d *IPFilterDB) ListIPNetworks(ctx context.Context, color bool) ([]string, error) {
-	nets := make([]string, 0)
+	//nets := make([]string, 0)
+	nets := []struct {
+		Id      int64 // nolint
+		Network string
+	}{}
 
 	switch color {
 	case true:
@@ -116,6 +122,11 @@ func (d *IPFilterDB) ListIPNetworks(ctx context.Context, color bool) ([]string, 
 			return nil, err
 		}
 	}
+	var result []string
 
-	return nets, nil
+	for _, v := range nets {
+		result = append(result, v.Network)
+	}
+
+	return result, nil
 }

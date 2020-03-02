@@ -101,7 +101,7 @@ var RootCmd = &cobra.Command{ //nolint
 		if loggercfg.Verbose {
 			lg.Infof("Starting AntiBruteForceService on Port=%s...", cfg.ServicePort)
 		}
-		err = abfserver.ListenAndServe(net.JoinHostPort(cfg.ServiceHost, cfg.ServicePort))
+		err = abfserver.ListenAndServe(net.JoinHostPort("", cfg.ServicePort))
 
 		if err != nil {
 			lg.Fatal("Error cannot start AntiBruteForce Server", err)

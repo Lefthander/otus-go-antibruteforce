@@ -149,7 +149,7 @@ var showCmd = &cobra.Command{ //nolint
 		r, err := client.GetIpFilters(ctx, &api.IPFilterData{Network: "", Color: color})
 
 		if err != nil {
-			log.Fatalf("unable to reset limits: %v", err)
+			log.Fatalf("unable to show the ip filters: %v", err)
 		}
 		log.Println("Done: ", r.Filters)
 	},

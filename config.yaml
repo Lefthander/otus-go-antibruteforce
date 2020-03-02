@@ -2,7 +2,7 @@
 
 # ABF-SRV Server configuration parameters
 abf-srv-host: localhost
-abf-srv-port: 8999
+abf-srv-port: 4000
 abf-srv-login-limit: 10
 abf-srv-password-limit: 100
 abf-srv-ipaddress-limit: 1000
@@ -17,6 +17,7 @@ abf-srv-logger-debug: true
 abf-srv-env: dev
 
 # Postgres DB Configuration parameters
+abf-db-type: psql
 abf-db-host: host.docker.internal
 abf-db-port: 5432
 abf-db-username: abfuser
@@ -25,5 +26,5 @@ abf-db-dbname: postgres
 
 # ABF-CTL Configuration part
 abf-ctl-host: localhost
-abf-ctl-port: 8999
+abf-ctl-port: 4000
 abf-ctl-timeout: 30s
