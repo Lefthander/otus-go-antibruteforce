@@ -42,19 +42,6 @@ var RootCmd = &cobra.Command{ // nolint
 	ValidArgs: []string{"add", "del", "reset", "show", "test"},
 	Args:      cobra.ExactValidArgs(numberOfValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
-		//	clientcfg: = config.GetClientCfg()
-		//	ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
-		//	client = newClient(ctx, clientcfg.Host, clientcfg.Port)
-
-		// Running watchdog goroutine to control the system interrupts
-		/* 		go func() {
-		   			terminate := make(chan os.Signal, 1)
-		   			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
-		   			<-terminate
-		   			log.Println("Received system interrupt...")
-		   			cancel()
-		   		}()
-		*/
 	},
 }
 
@@ -65,7 +52,9 @@ var addCmd = &cobra.Command{ //nolint
 		clientcfg := config.GetClientCfg()
 		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
 		defer cancel()
+
 		client := newClient(ctx, clientcfg.Host, clientcfg.Port)
+
 		go func() {
 			terminate := make(chan os.Signal, 1)
 			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
@@ -75,9 +64,11 @@ var addCmd = &cobra.Command{ //nolint
 		}()
 
 		r, err := client.AddToIpFilter(ctx, &api.IPFilterData{Network: network, Color: color})
+
 		if err != nil {
 			log.Fatalf("unable to add to list: %v", err)
 		}
+
 		log.Println("Done: ", r.Error)
 	},
 }
@@ -89,7 +80,9 @@ var delCmd = &cobra.Command{ //nolint
 		clientcfg := config.GetClientCfg()
 		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
 		defer cancel()
+
 		client := newClient(ctx, clientcfg.Host, clientcfg.Port)
+
 		go func() {
 			terminate := make(chan os.Signal, 1)
 			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
@@ -98,9 +91,11 @@ var delCmd = &cobra.Command{ //nolint
 			cancel()
 		}()
 		r, err := client.DeleteFromIpFilter(ctx, &api.IPFilterData{Network: network, Color: color})
+
 		if err != nil {
 			log.Fatalf("unable to add to list: %v", err)
 		}
+
 		log.Println("Done: ", r.Error)
 	},
 }
@@ -112,7 +107,9 @@ var resetCmd = &cobra.Command{ //nolint
 		clientcfg := config.GetClientCfg()
 		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
 		defer cancel()
+
 		client := newClient(ctx, clientcfg.Host, clientcfg.Port)
+
 		go func() {
 			terminate := make(chan os.Signal, 1)
 			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
@@ -122,9 +119,11 @@ var resetCmd = &cobra.Command{ //nolint
 		}()
 
 		r, err := client.Reset(ctx, &api.AuthRequest{Login: login, Password: "", Ipaddr: ipaddress})
+
 		if err != nil {
 			log.Fatalf("unable to reset limits: %v", err)
 		}
+
 		log.Println("Done: ", r.Response)
 	},
 }
@@ -136,7 +135,9 @@ var showCmd = &cobra.Command{ //nolint
 		clientcfg := config.GetClientCfg()
 		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
 		defer cancel()
+
 		client := newClient(ctx, clientcfg.Host, clientcfg.Port)
+
 		go func() {
 			terminate := make(chan os.Signal, 1)
 			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
@@ -146,6 +147,7 @@ var showCmd = &cobra.Command{ //nolint
 		}()
 
 		r, err := client.GetIpFilters(ctx, &api.IPFilterData{Network: "", Color: color})
+
 		if err != nil {
 			log.Fatalf("unable to reset limits: %v", err)
 		}
@@ -155,6 +157,7 @@ var showCmd = &cobra.Command{ //nolint
 
 func newClient(ctx context.Context, host, port string) api.ABFServiceClient {
 	conn, err := grpc.DialContext(ctx, net.JoinHostPort(host, port), grpc.WithInsecure())
+
 	if err != nil {
 		log.Fatal("Cannot connect to ABF server", err)
 	}
@@ -178,7 +181,9 @@ func init() { // nolint
 
 func main() {
 	log.Println("ABF Client started..")
+
 	err := config.GetConfig("config.yml")
+
 	if err != nil {
 		log.Fatal("Error setting up the configuration ", err)
 	}
