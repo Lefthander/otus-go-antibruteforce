@@ -20,3 +20,5 @@ deploy:
 status:
 	docker-compose -f build/compose/docker-compose.yml ps
 
+run:
+	docker-compose -f build/compose/docker-compose.yml up
