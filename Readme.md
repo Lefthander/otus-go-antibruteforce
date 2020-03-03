@@ -2,9 +2,11 @@
 [![CircleCI](https://circleci.com/gh/Lefthander/otus-go-antibruteforce.svg?style=shield)](https://circleci.com/gh/Lefthander/otus-go-antibruteforce)
 [![Go Report Card](https://goreportcard.com/badge/github.com/lefthander/otus-go-antibruteforce)](https://goreportcard.com/report/github.com/lefthander/tokenbucket)
 
-# Проектная работа
+# Проектная работа - AntiBruteForce Service
 
 * [Анти-брутфорс описание задания](./anti-bruteforce.md)
+
+## Команды для сборки и тестирования проекта.
 
 * `make generate` - Генерация gRPC API
 * `make lint` - Проверка проекта с помощью утилиты golangci-lint
@@ -16,7 +18,7 @@
 * `make status`  - docker-compose ps
 * `make run` - docker-compose up
 
-# Команды avf-ctl
+## Команды avf-ctl
 
 * `abf-ctl add -n <network> -c=<flag>` - Добавить подсеть в черный - c=false или белый - c=true список
 * `abf-ctl del -n <network> -c=<flag>` - Удалить подсеть из черного - c=false или белого - c=true списка
