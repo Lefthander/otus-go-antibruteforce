@@ -25,8 +25,9 @@ var (
 
 	logcfg *config.LoggerConfig // nolint
 
-	login   string //nolint
-	network string // nolint
+	login    string //nolint
+	network  string // nolint
+	password string // nolint
 
 	color bool // nolint
 
@@ -155,6 +156,34 @@ var showCmd = &cobra.Command{ //nolint
 	},
 }
 
+var testCmd = &cobra.Command{ //nolint
+	Use:   "test",
+	Short: "test",
+	Long:  "test request ABF service to verify the triplet of (login,password,ip)",
+	Run: func(cmd *cobra.Command, args []string) {
+		clientcfg := config.GetClientCfg()
+		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
+		defer cancel()
+
+		client := newClient(ctx, clientcfg.Host, clientcfg.Port)
+
+		go func() {
+			terminate := make(chan os.Signal, 1)
+			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
+			<-terminate
+			log.Println("Received system interrupt...")
+			cancel()
+		}()
+
+		r, err := client.Allow(ctx, &api.AuthRequest{Login: login, Password: password, Ipaddr: ipaddress})
+
+		if err != nil {
+			log.Fatalf("unable to show the ip filters: %v", err)
+		}
+		log.Println("Done: ", r.GetOk())
+	},
+}
+
 func newClient(ctx context.Context, host, port string) api.ABFServiceClient {
 	conn, err := grpc.DialContext(ctx, net.JoinHostPort(host, port), grpc.WithInsecure())
 
@@ -177,6 +206,10 @@ func init() { // nolint
 	RootCmd.AddCommand(resetCmd)
 	showCmd.PersistentFlags().BoolVarP(&color, "color", "c", true, "white - true, false black")
 	RootCmd.AddCommand(showCmd)
+	testCmd.PersistentFlags().StringVarP(&login, "login", "l", "", "login to test")
+	testCmd.PersistentFlags().StringVarP(&login, "password", "p", "", "password to test")
+	testCmd.PersistentFlags().StringVarP(&ipaddress, "ipaddress", "i", "", "ip to test")
+	RootCmd.AddCommand(testCmd)
 }
 
 func main() {
