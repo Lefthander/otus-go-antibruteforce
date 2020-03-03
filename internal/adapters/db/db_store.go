@@ -65,11 +65,15 @@ func (d *IPFilterDB) DeleteIPNetwork(ctx context.Context, network net.IPNet, col
 
 // IsIPConform verifies does the IP address belongs to White/Black table, if belongs true, error = white/black
 func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
-	requestWhite := `SELECT * FROM ip_white_list WHERE ipaddr=$1 << ANY (network)`
+	//requestWhite := `SELECT * FROM ip_white_list WHERE ipaddr=$1 << ANY (network)`
+	requestWhite := `select * from ip_white_list where cidr $1 << network(network);`
 
-	wnets := make([]string, 0)
+	wnets := []struct {
+		Id      int64 // nolint
+		Network string
+	}{}
 
-	err := d.DB.SelectContext(ctx, &wnets, requestWhite)
+	err := d.DB.SelectContext(ctx, &wnets, requestWhite, ip.String())
 
 	if err != nil && err != sql.ErrNoRows {
 		return false, err
@@ -79,13 +83,17 @@ func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 		return true, errors.ErrIPFilterMatchedWhiteList
 	}
 
-	bnets := make([]string, 0)
+	bnets := []struct {
+		Id      int64 // nolint
+		Network string
+	}{}
 
 	//select * from ip_white_list where cidr '10.10.0.0/32' << network(network);
 
-	requestBlack := `SELECT * FROM ip_black_list WHERE ipaddr=$1 << ANY (network)`
+	// requestBlack := `SELECT * FROM ip_black_list WHERE ipaddr=$1 << ANY (network)`
+	requestBlack := `select * from ip_black_list where cidr $1 << network(network);`
 
-	err = d.DB.SelectContext(ctx, &bnets, requestBlack)
+	err = d.DB.SelectContext(ctx, &bnets, requestBlack, ip.String())
 
 	if err != nil && err != sql.ErrNoRows {
 		return false, err
@@ -122,7 +130,8 @@ func (d *IPFilterDB) ListIPNetworks(ctx context.Context, color bool) ([]string, 
 			return nil, err
 		}
 	}
-	var result []string
+
+	result := make([]string, 0)
 
 	for _, v := range nets {
 		result = append(result, v.Network)
