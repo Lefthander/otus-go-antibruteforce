@@ -134,7 +134,6 @@ var showCmd = &cobra.Command{ //nolint
 	Short: "show",
 	Long:  "show dumps the corresponding ip table black/white",
 	Run: func(cmd *cobra.Command, args []string) {
-		var listType string
 		clientcfg := config.GetClientCfg()
 		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
 		defer cancel()
@@ -154,13 +153,7 @@ var showCmd = &cobra.Command{ //nolint
 		if err != nil {
 			log.Fatalf("unable to show the ip filters: %v", err)
 		}
-		switch color {
-		case true:
-			listType = "White"
-		case false:
-			listType = "Black"
-		}
-		log.Printf("IP List %s Contains: %s", listType, r.Filters)
+
 		printTable(r.Filters, color)
 	},
 }
