@@ -6,10 +6,12 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 
 	"github.com/Lefthander/otus-go-antibruteforce/config"
 	"github.com/Lefthander/otus-go-antibruteforce/internal/grpc/api"
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -132,6 +134,7 @@ var showCmd = &cobra.Command{ //nolint
 	Short: "show",
 	Long:  "show dumps the corresponding ip table black/white",
 	Run: func(cmd *cobra.Command, args []string) {
+		var listType string
 		clientcfg := config.GetClientCfg()
 		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
 		defer cancel()
@@ -151,8 +154,39 @@ var showCmd = &cobra.Command{ //nolint
 		if err != nil {
 			log.Fatalf("unable to show the ip filters: %v", err)
 		}
-		log.Println("Done: ", r.Filters)
+		switch color {
+		case true:
+			listType = "White"
+		case false:
+			listType = "Black"
+		}
+		log.Printf("IP List %s Contains: %s", listType, r.Filters)
+		printTable(r.Filters, color)
 	},
+}
+
+// printTable just a support function for printing the IP B/W table
+func printTable(data []string, color bool) {
+	var listType string
+	table := tablewriter.NewWriter(os.Stdout)
+
+	switch color {
+	case true:
+		listType = "White"
+	case false:
+		listType = "Black"
+	}
+
+	table.SetHeader([]string{"#", "B/W", "CIDR"})
+
+	for i, v := range data {
+		l := make([]string, 0)
+		l = append(l, strconv.Itoa(i))
+		l = append(l, listType)
+		l = append(l, v)
+		table.Append(l)
+	}
+	table.Render()
 }
 
 func newClient(ctx context.Context, host, port string) api.ABFServiceClient {
