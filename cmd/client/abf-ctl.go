@@ -174,7 +174,7 @@ func printTable(data []string, color bool) {
 
 	for i, v := range data {
 		l := make([]string, 0)
-		l = append(l, strconv.Itoa(i))
+		l = append(l, strconv.Itoa(i+1))
 		l = append(l, listType)
 		l = append(l, v)
 		table.Append(l)
