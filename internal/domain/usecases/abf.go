@@ -164,12 +164,20 @@ func (a *ABFService) IsAuthenticate(ctx context.Context, authRequest entities.Au
 
 	flag, err := a.IsIPConform(ctx, net.ParseIP(authRequest.IPAddress))
 
-	if flag && err == errors.ErrIPFilterMatchedWhiteList {
+	if !flag && err != errors.ErrIPFilterNoMatch {
+
+		a.logger.Error("Error processing IP Filters", err)
+		return false, err
+	}
+
+	a.logger.Info("Flag & error: ", flag, err)
+
+	if flag && (err == errors.ErrIPFilterMatchedWhiteList) {
 		return true, nil
 	}
 
 	if flag && err == errors.ErrIPFilterMatchedBlackList {
-		return false, errors.ErrIPFilterMatchedBlackList
+		return false, nil
 	}
 
 	loginOk, err := a.CheckBucketLogin(ctx, authRequest.Login)
@@ -194,21 +202,31 @@ func (a *ABFService) IsAuthenticate(ctx context.Context, authRequest entities.Au
 }
 
 // IsIPConform verifies does specified IP included in the filter table either black or white
+// 1. Matched Black list   : true,  ErrIPFilterMatchedBlackList
+// 2. Matched White list   : true,  ErrIPFilterMatchedWhiteList
+// 3. Matched Nothing      : false, ErrIPFilterNoMatch
+// 4. Something goes wrong : false, err
 func (a *ABFService) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 	ctx, cancel := context.WithTimeout(ctx, a.config.TimeOut)
 	defer cancel()
 
 	flag, err := a.IPFilterStorage.IsIPConform(ctx, ip)
 
+	a.logger.Info("[ IsIPConform ] ", flag, err)
+
 	if flag && err == errors.ErrIPFilterMatchedWhiteList {
-		return true, nil
+		return true, errors.ErrIPFilterMatchedWhiteList
 	}
 
 	if flag && err == errors.ErrIPFilterMatchedBlackList {
-		return false, nil
+		return true, errors.ErrIPFilterMatchedBlackList
 	}
 
-	return true, nil
+	if !flag && err == errors.ErrIPFilterNoMatch {
+		return false, errors.ErrIPFilterNoMatch
+	}
+
+	return false, err
 }
 
 // AddIPNetwork adds the net to the white or black table

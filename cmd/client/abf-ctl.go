@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/Lefthander/otus-go-antibruteforce/config"
+	"github.com/Lefthander/otus-go-antibruteforce/internal/domain/errors"
 	"github.com/Lefthander/otus-go-antibruteforce/internal/grpc/api"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
@@ -33,6 +34,8 @@ var (
 	color bool // nolint
 
 	ipaddress string //nolint
+
+	password string //nolint
 
 	//ctx context.Context // nolint
 )
@@ -158,6 +161,50 @@ var showCmd = &cobra.Command{ //nolint
 	},
 }
 
+var testCmd = &cobra.Command{
+	Use:   "test",
+	Short: "test",
+	Long:  "Test specific triple (login,ip,password) against default rulez",
+	Run: func(cmd *cobra.Command, args []string) {
+		var response string
+		clientcfg := config.GetClientCfg()
+		ctx, cancel := context.WithTimeout(context.Background(), clientcfg.ConnectionTimeOut)
+		defer cancel()
+
+		client := newClient(ctx, clientcfg.Host, clientcfg.Port)
+
+		go func() {
+			terminate := make(chan os.Signal, 1)
+			signal.Notify(terminate, os.Interrupt, syscall.SIGINT)
+			<-terminate
+			log.Println("Received system interrupt...")
+			cancel()
+		}()
+
+		r, err := client.Allow(ctx, &api.AuthRequest{Login: login, Password: password, Ipaddr: ipaddress})
+
+		log.Println("Received response: ", err, r)
+		if err != nil && err != errors.ErrIPFilterMatchedBlackList {
+			log.Fatal("Error: ", err)
+		}
+		// log.Printf("Test status for login %s, password %s, ip %s is %t", login, password, ipaddress, r.GetOk())
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetHeader([]string{"Login", "Password", "IP Address", "Response"})
+		if r.GetOk() {
+			response = "Ok"
+		} else {
+			response = "NOk"
+		}
+		status := make([]string, 0)
+		status = append(status, login)
+		status = append(status, password)
+		status = append(status, ipaddress)
+		status = append(status, response)
+		table.Append(status)
+		table.Render()
+	},
+}
+
 // printTable just a support function for printing the IP B/W table
 func printTable(data []string, color bool) {
 	var listType string
@@ -204,6 +251,10 @@ func init() { // nolint
 	RootCmd.AddCommand(resetCmd)
 	showCmd.PersistentFlags().BoolVarP(&color, "color", "c", true, "white - true, false black")
 	RootCmd.AddCommand(showCmd)
+	testCmd.PersistentFlags().StringVarP(&login, "login", "l", "", "user login")
+	testCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "user passsword")
+	testCmd.PersistentFlags().StringVarP(&ipaddress, "ipaddress", "i", "", "ip address to test")
+	RootCmd.AddCommand(testCmd)
 }
 
 func main() {
