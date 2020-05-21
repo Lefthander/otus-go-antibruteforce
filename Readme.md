@@ -20,7 +20,11 @@
 * `make tests` - integration tests start i.e docker-compose up
 * `make untests` - integration tests stops i.e docker-compose down
 
-## Команды avf-ctl
+## Команды abf-ctl
+
+abf-ctl - CLI клиент для работы с AntiBruteForce Service. 
+
+Ожидает наличие файла конфигурации - config.yaml в папке запуска.
 
 * `abf-ctl add -n <network> -c=<flag>` - Добавить подсеть в черный - c=false или белый - c=true список
 * `abf-ctl del -n <network> -c=<flag>` - Удалить подсеть из черного - c=false или белого - c=true списка
