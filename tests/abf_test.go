@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Lefthander/otus-go-antibruteforce/internal/grpc/api"
+	"github.com/Pallinder/go-randomdata"
 	"github.com/cucumber/godog"
 	"github.com/cucumber/godog/colors"
 	"google.golang.org/grpc"
@@ -23,7 +24,7 @@ const (
 
 var (
 	ctx    = context.Background()
-	abfURL = "localhost:4000"
+	abfURL = "abf-service:4000"
 )
 
 type abfTest struct {
@@ -118,13 +119,12 @@ func (a *abfTest) sendRequests(number int) error {
 		a.numberOfAllowedRequests = allowedRequests
 		return nil
 	}
-
-	return godog.ErrPending
+	return nil
 }
 
-func allRequestsAreNotBlocked() error {
+func (a *abfTest) allRequestsAreNotBlocked() error {
 
-	return godog.ErrPending
+	return nil
 }
 
 /* func allRequestsAreNotBlocked() error {
@@ -141,10 +141,21 @@ func requestArePassed(arg1 int) error {
 }
 
 func (a *abfTest) isAllow() error {
+	login, password, ip := a.login, a.password, a.ipaddress
+	if login == random {
+		login = randomdata.Email()
+	}
+	if password == random {
+		password = randomdata.SillyName()
+	}
+
+	if ip == random {
+		ip = randomdata.IpV4Address()
+	}
 	r, err := a.client.Allow(ctx, &api.AuthRequest{
-		Login:    a.login,
-		Password: a.password,
-		Ipaddr:   a.ipaddress,
+		Login:    login,
+		Password: password,
+		Ipaddr:   ip,
 	})
 	if err != nil {
 		return err
@@ -310,8 +321,7 @@ func FeatureContext(s *godog.Suite) {
 	s.Step(`^ipaddress "([^"]*)"$`, a.setIpaddress)
 	s.Step(`^delay between request is "([^"]*)"$`, a.delayBetweenRequestIs)
 	s.Step(`^send (\d+) requests$`, a.sendRequests)
-	s.Step(`^all requests are nsot blocked$`, allRequestsAreNotBlocked)
-	s.Step(`^All requests are not blocked$`, allRequestsAreNotBlocked)
+	s.Step(`^All requests are not blocked$`, a.allRequestsAreNotBlocked)
 	s.Step(`^reset at (\d+) request$`, a.resetAtRequest)
 	s.Step(`^(\d+) request are passed$`, requestArePassed)
 	s.Step(`^verify ipaddress$`, a.verifyIpaddress)

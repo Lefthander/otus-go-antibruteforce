@@ -3,6 +3,7 @@ module github.com/Lefthander/otus-go-antibruteforce
 go 1.13
 
 require (
+	github.com/Pallinder/go-randomdata v1.2.0
 	github.com/cucumber/godog v0.9.0
 	github.com/golang/protobuf v1.3.2
 	github.com/google/uuid v1.1.1
