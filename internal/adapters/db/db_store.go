@@ -69,7 +69,7 @@ func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 	requestWhite := `SELECT * FROM ip_white_list WHERE $1 << (network)`
 	//wnets := make([]string, 0)
 	wnets := make([]struct {
-		Id      int64
+		Id      int64 // nolint
 		Network string
 	}, 0)
 
@@ -86,7 +86,7 @@ func (d *IPFilterDB) IsIPConform(ctx context.Context, ip net.IP) (bool, error) {
 	//bnets := make([]string, 0)
 
 	bnets := make([]struct {
-		Id      int64
+		Id      int64 //nolint
 		Network string
 	}, 0)
 

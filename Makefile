@@ -7,6 +7,7 @@ test:
 	go test -v -cover ./...
 	go test -v -race ./...
 
+.PHONY: integration_test
 integration_test:
 	go test -v ./tests	
 build-server:
@@ -26,9 +27,10 @@ status:
 run:
 	docker-compose -f build/compose/docker-compose.yml up
 
+.PHONY: tests
 tests:
 	docker-compose -f build/compose/docker-compose.itest.yml up  -d --build
 	docker-compose -f build/compose/docker-compose.itest.yml logs --follow integration_test
-
+.PHONY: untests
 untests:
 	docker-compose -f build/compose/docker-compose.itest.yml down

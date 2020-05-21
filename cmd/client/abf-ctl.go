@@ -36,8 +36,6 @@ var (
 
 	ipaddress string //nolint
 
-	password string //nolint
-
 	//ctx context.Context // nolint
 )
 
