@@ -25,8 +25,8 @@ jobs:
       - run: go fmt ./...
       - run: go vet ./...
       - run: go get -v -t -d ./...
-      - run: go test -v $(go list ./... | grep -v /tests/)
-      - run: go test -race $(go list ./... | grep -v /tests/)
+      - run: go test -v `go list ./... | grep -v /tests`
+      - run: go test -race `go list ./... | grep -v /tests`
       - run:
           name: "validate lint"
           command: |
