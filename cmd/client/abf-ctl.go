@@ -19,6 +19,7 @@ import (
 
 const (
 	numberOfValidArgs = 1
+	offset            = 1
 )
 
 var (
@@ -160,7 +161,7 @@ var showCmd = &cobra.Command{ //nolint
 	},
 }
 
-var testCmd = &cobra.Command{
+var testCmd = &cobra.Command{ //nolint
 	Use:   "test",
 	Short: "test",
 	Long:  "Test specific triple (login,ip,password) against default rulez",
@@ -207,6 +208,7 @@ var testCmd = &cobra.Command{
 // printTable just a support function for printing the IP B/W table
 func printTable(data []string, color bool) {
 	var listType string
+
 	table := tablewriter.NewWriter(os.Stdout)
 
 	switch color {
@@ -220,11 +222,12 @@ func printTable(data []string, color bool) {
 
 	for i, v := range data {
 		l := make([]string, 0)
-		l = append(l, strconv.Itoa(i+1))
+		l = append(l, strconv.Itoa(i+offset))
 		l = append(l, listType)
 		l = append(l, v)
 		table.Append(l)
 	}
+
 	table.Render()
 }
 

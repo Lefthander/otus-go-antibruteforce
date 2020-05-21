@@ -165,7 +165,6 @@ func (a *ABFService) IsAuthenticate(ctx context.Context, authRequest entities.Au
 	flag, err := a.IsIPConform(ctx, net.ParseIP(authRequest.IPAddress))
 
 	if !flag && err != errors.ErrIPFilterNoMatch {
-
 		a.logger.Error("Error processing IP Filters", err)
 		return false, err
 	}

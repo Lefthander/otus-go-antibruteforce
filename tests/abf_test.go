@@ -1,4 +1,4 @@
-//nolint:golangci-lint
+//nolint
 package tests
 
 import (
