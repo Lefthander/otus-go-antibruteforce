@@ -3,9 +3,9 @@ generate:
 lint:
 	golangci-lint run
 test:
-	go test -v ./...
-	go test -v -cover ./...
-	go test -v -race ./...
+	go test -v `go list ./...| grep -v /tests`
+	go test -v -cover `go list ./...| grep -v /tests`
+	go test -v -race `go list ./...| grep -v /tests`
 
 .PHONY: integration_test
 integration_test:
