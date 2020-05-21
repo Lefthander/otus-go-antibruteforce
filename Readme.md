@@ -17,6 +17,8 @@
 * `make deploy`  - docker-compose up -d --build
 * `make status`  - docker-compose ps
 * `make run` - docker-compose up
+* `make tests` - integration tests start i.e docker-compose up
+* `make untests` - integration tests stops i.e docker-compose down
 
 ## Команды avf-ctl
 
