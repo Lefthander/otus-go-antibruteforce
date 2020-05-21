@@ -1,3 +1,4 @@
+//nolint
 package tests
 
 import (
