@@ -1,4 +1,4 @@
-//nolint
+//nolint:golangci-lint
 package tests
 
 import (
@@ -21,11 +21,11 @@ const (
 	Black    = false
 	White    = true
 	DummyNet = "0.0.0.0/24"
+	abfURL   = "abf-service:4000"
 )
 
 var (
-	ctx    = context.Background()
-	abfURL = "abf-service:4000"
+	ctx = context.Background()
 )
 
 type abfTest struct {
