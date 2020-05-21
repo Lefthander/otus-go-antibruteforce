@@ -6,6 +6,9 @@ test:
 	go test -v ./...
 	go test -v -cover ./...
 	go test -v -race ./...
+
+integration_test:
+	go test -v ./tests	
 build-server:
 	go build -o ./bin/abf-srv github.com/Lefthander/otus-go-antibruteforce/cmd/server
 build-client:
@@ -22,3 +25,10 @@ status:
 
 run:
 	docker-compose -f build/compose/docker-compose.yml up
+
+tests:
+	docker-compose -f build/compose/docker-compose.itest.yml up  -d --build
+	docker-compose -f build/compose/docker-compose.itest.yml logs --follow integration_test
+
+untests:
+	docker-compose -f build/compose/docker-compose.itest.yml down
