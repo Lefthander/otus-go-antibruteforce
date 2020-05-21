@@ -1,6 +1,7 @@
 run:
   tests: false
-
+  skip-dirs:
+    - tests
 linters:
   disable-all: false
   enable:
