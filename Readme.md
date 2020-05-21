@@ -2,9 +2,29 @@
 [![CircleCI](https://circleci.com/gh/Lefthander/otus-go-antibruteforce.svg?style=shield)](https://circleci.com/gh/Lefthander/otus-go-antibruteforce)
 [![Go Report Card](https://goreportcard.com/badge/github.com/lefthander/otus-go-antibruteforce)](https://goreportcard.com/report/github.com/lefthander/tokenbucket)
 
-# Проектная работа
+# Проектная работа - AntiBruteForce Service
 
 * [Анти-брутфорс описание задания](./anti-bruteforce.md)
+
+## Команды для сборки и тестирования проекта.
+
+* `make generate` - Генерация gRPC API
+* `make lint` - Проверка проекта с помощью утилиты golangci-lint
+* `make test` - Выполнение Unit тестов
+* `make build-server` - Сборка .bin/abf-srv (API Server)
+* `make build-client` - Сборка ./bin/abf-ctl (CLI Client for abf-srv)
+* `make undeploy` - docker-compose down
+* `make deploy`  - docker-compose up -d --build
+* `make status`  - docker-compose ps
+* `make run` - docker-compose up
+
+## Команды avf-ctl
+
+* `abf-ctl add -n <network> -c=<flag>` - Добавить подсеть в черный - c=false или белый - c=true список
+* `abf-ctl del -n <network> -c=<flag>` - Удалить подсеть из черного - c=false или белого - c=true списка
+* `abf-ctl show -c=<flag>` - Распечатать весь черный c=false или белый - c=true список
+* `abf-ctl test -l <login> -p <password> -i <ip>` - Проверить разрешено ли клиенту с указанными параметрами авторизоваться
+* `abf-ctl reset -l <login> -i <ip>` - Сбросить в исходные знаечения TokenBucket'ы для соответсвующего login, password
 
 ## Обязательные требования для каждого проекта
 

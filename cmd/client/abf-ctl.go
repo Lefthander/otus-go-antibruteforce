@@ -28,8 +28,9 @@ var (
 
 	logcfg *config.LoggerConfig // nolint
 
-	login   string //nolint
-	network string // nolint
+	login    string //nolint
+	network  string // nolint
+	password string // nolint
 
 	color bool // nolint
 

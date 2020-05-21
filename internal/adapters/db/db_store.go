@@ -131,7 +131,8 @@ func (d *IPFilterDB) ListIPNetworks(ctx context.Context, color bool) ([]string, 
 			return nil, err
 		}
 	}
-	var result []string
+
+	result := make([]string, 0)
 
 	for _, v := range nets {
 		result = append(result, v.Network)
